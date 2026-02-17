@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comunidad Alumnos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-image: linear-gradient(rgba(248, 250, 252, 0.8), rgba(248, 250, 252, 0.8)), url('1.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+        }
+        .glass { 
+            background: rgba(255, 255, 255, 0.7); 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .modal-overlay { display: none; }
+        .folder-content { display: none; }
+        .folder-content.active { display: block; }
+        .folder-header[aria-expanded="true"] .arrow-icon { transform: rotate(180deg); }
+        [v-cloak] { display: none; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 pb-24">
+
+    <!-- App Container -->
+    <div id="app">
+        <!-- VISTA: LISTA DE ALUMNOS (Home) -->
+        <section id="view-home" class="view">
+            <header class="px-6 pt-10 pb-6 max-w-2xl mx-auto">
+                <h1 class="text-4xl font-extrabold tracking-tight text-slate-900">Alumnos</h1>
+                <p class="text-slate-500 mt-1 text-lg">Conecta con tus compañeros de clase</p>
+            </header>
+
+            <main id="student-list" class="px-4 max-w-2xl mx-auto space-y-4">
+                <div class="flex justify-center py-10" id="loader-home">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                </div>
+                <!-- Los alumnos se cargarán aquí -->
+            </main>
+        </section>
+
+        <!-- VISTA: PERFIL DETALLADO -->
+        <section id="view-profile" class="view hidden">
+            <main class="max-w-2xl mx-auto min-h-screen">
+                <!-- Portada -->
+                <div class="relative h-56 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 md:rounded-b-[3rem] overflow-hidden shadow-lg">
+                    <div class="absolute inset-0 opacity-30 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                    <button onclick="showView('home')" class="absolute top-6 left-6 p-3 bg-white/20 backdrop-blur-md rounded-2xl text-white hover:bg-white/40 transition-all z-10">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                </div>
+
+                <!-- Contenido Perfil -->
+                <div id="profile-content" class="px-6 -mt-20 relative z-10">
+                    <!-- Los datos del perfil se inyectan aquí -->
+                </div>
+            </main>
+        </section>
+
+        <!-- Bottom Navigation -->
+        <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md glass border border-white/40 shadow-2xl rounded-[2.5rem] px-2 py-2 z-50">
+            <div class="flex items-center justify-between">
+                <button onclick="showView('home')" class="p-4 text-indigo-600 rounded-full transition-colors">
+                    <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </button>
+
+                <button id="mainButton" class="relative group">
+                    <div id="nav-user-photo" class="w-14 h-14 bg-slate-900 text-white rounded-full flex items-center justify-center overflow-hidden transition-transform active:scale-90 shadow-lg">
+                        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                </button>
+
+                <button class="p-4 text-slate-400 hover:text-slate-600 transition-colors">
+                    <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Modales -->
+        <!-- Auth Modal -->
+        <div id="authModal" class="modal-overlay fixed inset-0 z-[100] items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+            <div class="bg-white w-full max-w-md rounded-[2rem] overflow-hidden shadow-2xl max-h-[90vh] overflow-y-auto p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-extrabold text-slate-800">Bienvenido</h2>
+                    <button onclick="closeModal('authModal')" class="p-2 text-slate-400 hover:text-slate-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                
+                <div class="flex bg-slate-100 p-1 rounded-xl mb-8">
+                    <button id="tabLoginBtn" onclick="toggleAuthTab('login')" class="flex-1 py-2 text-sm font-bold rounded-lg transition-all bg-white text-indigo-600 shadow-sm">Entrar</button>
+                    <button id="tabRegisterBtn" onclick="toggleAuthTab('register')" class="flex-1 py-2 text-sm font-bold rounded-lg transition-all text-slate-500 hover:text-slate-700">Unirse</button>
+                </div>
+
+                <form id="loginForm" class="space-y-4">
+                    <input type="email" id="login-email" placeholder="tu@correo.com" class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500" required>
+                    <input type="password" id="login-password" placeholder="••••••••" class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500" required>
+                    <button type="submit" class="w-full py-4 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg">Iniciar Sesión</button>
+                </form>
+
+                <form id="registerForm" class="hidden space-y-4">
+                    <input type="text" id="reg-name" placeholder="Nombre Completo" class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl" required>
+                    <input type="email" id="reg-email" placeholder="Correo Electrónico" class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl" required>
+                    <input type="text" id="reg-race" placeholder="Carrera / Especialidad" class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl" required>
+                    <select id="reg-genre" class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl appearance-none">
+                        <option value="Masculino">Masculino</option>
+                        <option value="Femenino">Femenino</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                    <input type="password" id="reg-password" placeholder="Contraseña (mín. 6 caracteres)" class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl" required>
+                    <input type="text" id="reg-photo" placeholder="URL Foto de Perfil" class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl">
+                    <button type="submit" class="w-full py-4 bg-slate-900 text-white font-bold rounded-2xl shadow-lg">Crear Cuenta</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Edit Profile Modal -->
+        <div id="editProfileModal" class="modal-overlay fixed inset-0 z-[110] items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+            <div class="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl p-8 max-h-[90vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-black text-slate-800 italic">Mi Perfil</h2>
+                    <button onclick="closeModal('editProfileModal')" class="text-slate-400 hover:text-slate-600">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                <form id="editProfileForm" class="space-y-6">
+                    <div class="space-y-4">
+                        <input type="text" id="edit-name" placeholder="Nombre" class="w-full px-5 py-3 bg-slate-50 border-none rounded-xl font-bold">
+                        <input type="text" id="edit-race" placeholder="Carrera" class="w-full px-5 py-3 bg-slate-50 border-none rounded-xl">
+                        <input type="text" id="edit-photo" placeholder="URL Foto" class="w-full px-5 py-3 bg-slate-50 border-none rounded-xl">
+                        
+                        <p class="text-[10px] font-black text-indigo-600 uppercase pt-4 border-t italic">Info Adicional</p>
+                        <div id="dynamic-fields-container" class="space-y-3"></div>
+                        <button type="button" onclick="addDynamicField()" class="w-full py-4 border-2 border-dashed border-indigo-100 text-indigo-600 font-bold rounded-2xl hover:bg-indigo-50">
+                            + Nuevo Atributo
+                        </button>
+                    </div>
+                    <button type="submit" class="w-full py-5 bg-indigo-600 text-white font-black rounded-3xl shadow-xl">Guardar Cambios</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Add Portfolio Modal -->
+        <div id="portfolioModal" class="modal-overlay fixed inset-0 z-[110] items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+            <div class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-black text-slate-800 italic">Añadir Trabajo</h2>
+                    <button onclick="closeModal('portfolioModal')" class="text-slate-400 hover:text-slate-600">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                <form id="portfolioForm" class="space-y-4">
+                    <input type="text" id="port-folder" placeholder="Carpeta (Ej. Java)" class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl" required>
+                    <input type="text" id="port-title" placeholder="Título del trabajo" class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl" required>
+                    <input type="url" id="port-url" placeholder="URL Link (https://...)" class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl" required>
+                    <button type="submit" class="w-full py-5 bg-indigo-600 text-white font-black rounded-2xl shadow-xl">Guardar Trabajo</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts de Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, query, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Configuración Global proporcionada por el entorno
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        // Inicialización
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Estado Global
+        let currentUser = null;
+        let currentProfileId = null;
+
+        // --- AUTH LOGIC ---
+        const initAuth = async () => {
+            // Usamos signInAnonymously si no hay token, para que todos puedan ver la lista
+            await signInAnonymously(auth);
+            onAuthStateChanged(auth, (user) => {
+                currentUser = user;
+                updateNavUI();
+            });
+        };
+
+        // --- NAVIGATION ---
+        window.showView = (viewName, id = null) => {
+            document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+            document.getElementById(`view-${viewName}`).classList.remove('hidden');
+            window.scrollTo(0, 0);
+            if (viewName === 'profile' && id) {
+                loadProfile(id);
+            }
+        };
+
+        const updateNavUI = () => {
+            const navPhotoCont = document.getElementById('nav-user-photo');
+            if (currentUser && !currentUser.isAnonymous) {
+                // Obtener foto del usuario real
+                getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'usuarios', currentUser.uid)).then(snap => {
+                    if (snap.exists() && snap.data().user_photo) {
+                        navPhotoCont.innerHTML = `<img src="${snap.data().user_photo}" class="w-full h-full object-cover">`;
+                        navPhotoCont.onclick = () => showView('profile', currentUser.uid);
+                    } else {
+                        navPhotoCont.innerHTML = `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+                        navPhotoCont.onclick = () => showView('profile', currentUser.uid);
+                    }
+                });
+            } else {
+                navPhotoCont.innerHTML = `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+                navPhotoCont.onclick = () => openModal('authModal');
+            }
+        };
+
+        // --- FETCH ALUMNOS ---
+        const loadStudents = () => {
+            const listCont = document.getElementById('student-list');
+            const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'usuarios'));
+            
+            onSnapshot(q, (snapshot) => {
+                document.getElementById('loader-home')?.remove();
+                listCont.innerHTML = '';
+                if (snapshot.empty) {
+                    listCont.innerHTML = `<div class="bg-white p-12 rounded-3xl text-center border-2 border-dashed border-slate-200"><p class="text-slate-400 font-medium text-lg">No hay alumnos registrados aún.</p></div>`;
+                    return;
+                }
+
+                snapshot.forEach(docSnap => {
+                    const student = docSnap.data();
+                    const card = document.createElement('div');
+                    card.className = "group block glass p-4 rounded-2xl shadow-sm border border-white/20 transition-all cursor-pointer hover:shadow-md hover:-translate-y-1 active:scale-[0.98]";
+                    card.onclick = () => showView('profile', docSnap.id);
+                    card.innerHTML = `
+                        <div class="flex items-center gap-4">
+                            <div class="relative flex-shrink-0">
+                                <img src="${student.user_photo || 'https://via.placeholder.com/150'}" 
+                                     class="w-16 h-16 rounded-2xl object-cover ring-2 ring-slate-50 group-hover:ring-indigo-100 transition-all">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-lg font-bold text-slate-800 truncate">${student.full_name}</h3>
+                                <p class="text-slate-500 text-sm font-medium truncate">${student.race}</p>
+                            </div>
+                            <div class="text-slate-300 group-hover:text-indigo-500 transition-colors px-2">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                            </div>
+                        </div>
+                    `;
+                    listCont.appendChild(card);
+                });
+            }, (err) => console.error(err));
+        };
+
+        // --- PROFILE LOGIC ---
+        const loadProfile = async (userId) => {
+            currentProfileId = userId;
+            const container = document.getElementById('profile-content');
+            container.innerHTML = `<div class="flex justify-center py-20"><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div></div>`;
+            
+            const userSnap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'usuarios', userId));
+            if (!userSnap.exists()) {
+                container.innerHTML = `<p class="text-center py-20">Usuario no encontrado</p>`;
+                return;
+            }
+
+            const data = userSnap.data();
+            const esDueno = currentUser && currentUser.uid === userId;
+            const infoPersonal = data.information || {};
+
+            let html = `
+                <div class="bg-white rounded-[3rem] shadow-2xl p-8 border border-white">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="relative">
+                            <img src="${data.user_photo || 'https://via.placeholder.com/150'}" class="w-36 h-36 md:w-44 md:h-44 rounded-[2.5rem] object-cover ring-8 ring-white shadow-xl">
+                            ${esDueno ? `<button id="btn-edit-profile" class="absolute bottom-2 right-2 p-2 bg-indigo-600 text-white rounded-full border-4 border-white shadow-lg"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg></button>` : ''}
+                        </div>
+                        <h1 class="mt-6 text-3xl font-extrabold text-slate-900 leading-tight">${data.full_name}</h1>
+                        <p class="text-indigo-600 font-bold bg-indigo-50 px-4 py-1 rounded-full mt-2 text-sm">${data.race}</p>
+
+                        <div class="grid grid-cols-2 gap-4 w-full mt-8 text-left">
+                            <div class="p-4 bg-slate-50 rounded-3xl border border-slate-100">
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 italic">Email</p>
+                                <p class="text-xs font-semibold truncate text-slate-700">${data.email}</p>
+                            </div>
+                            <div class="p-4 bg-slate-50 rounded-3xl border border-slate-100">
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 italic">Género</p>
+                                <p class="text-xs font-semibold text-slate-700">${data.genre || 'No definido'}</p>
+                            </div>
+                        </div>
+
+                        <div id="dynamic-info-list" class="w-full mt-4 grid gap-3">
+                            ${Object.entries(infoPersonal).map(([k, v]) => `
+                                <div class="p-4 bg-slate-50 rounded-3xl border border-slate-100 text-left">
+                                    <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1 italic">${k}</p>
+                                    ${v.startsWith('http') ? `<a href="${v}" target="_blank" class="text-sm font-bold text-indigo-600 hover:underline flex items-center gap-2">${k} <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>` : `<p class="text-sm font-semibold text-slate-700">${v}</p>`}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Portafolio -->
+                    <div class="mt-12">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-xl font-extrabold text-slate-800 flex items-center gap-2">
+                                <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
+                                Portafolio
+                            </h2>
+                            ${esDueno ? `<button id="btn-add-portfolio" class="p-2 bg-indigo-600 text-white rounded-xl shadow-lg"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>` : ''}
+                        </div>
+                        <div id="portfolio-list" class="space-y-4">
+                            <!-- Los trabajos se cargan aquí -->
+                        </div>
+                    </div>
+                    ${esDueno ? `<button id="logout-btn" class="mt-10 w-full py-4 text-red-500 font-bold border-2 border-dashed border-red-100 rounded-3xl">Cerrar Sesión</button>` : ''}
+                </div>
+            `;
+            container.innerHTML = html;
+
+            // Handlers
+            if(esDueno) {
+                document.getElementById('btn-edit-profile').onclick = () => openEditModal(data);
+                document.getElementById('btn-add-portfolio').onclick = () => openModal('portfolioModal');
+                document.getElementById('logout-btn').onclick = async () => {
+                    await signOut(auth);
+                    location.reload();
+                }
+            }
+            
+            loadPortfolioItems(userId, esDueno);
+        };
+
+        const loadPortfolioItems = (userId, esDueno) => {
+            const listCont = document.getElementById('portfolio-list');
+            const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'portafolio'));
+            
+            onSnapshot(q, (snapshot) => {
+                const items = [];
+                snapshot.forEach(d => {
+                    const data = d.data();
+                    if(data.usuario_id === userId) items.push({id: d.id, ...data});
+                });
+
+                if (items.length === 0) {
+                    listCont.innerHTML = `<div class="text-center py-10 bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-200"><p class="text-slate-400 font-medium">Aún no hay trabajos públicos</p></div>`;
+                    return;
+                }
+
+                // Agrupar por carpeta
+                const folders = items.reduce((acc, curr) => {
+                    if (!acc[curr.nombre_carpeta]) acc[curr.nombre_carpeta] = [];
+                    acc[curr.nombre_carpeta].push(curr);
+                    return acc;
+                }, {});
+
+                listCont.innerHTML = '';
+                Object.entries(folders).forEach(([folderName, files], idx) => {
+                    const div = document.createElement('div');
+                    div.className = "bg-slate-50/50 rounded-[2rem] border border-slate-100 overflow-hidden";
+                    div.innerHTML = `
+                        <button onclick="this.nextElementSibling.classList.toggle('active'); this.setAttribute('aria-expanded', this.getAttribute('aria-expanded') === 'true' ? 'false' : 'true')" 
+                                class="folder-header w-full p-5 flex items-center justify-between hover:bg-slate-100 transition-colors" aria-expanded="false">
+                            <div class="flex items-center gap-3 text-left">
+                                <div class="p-2 bg-white text-indigo-600 rounded-xl shadow-sm"><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg></div>
+                                <div><h3 class="font-bold text-slate-800 text-sm leading-tight">${folderName}</h3><span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${files.length} archivos</span></div>
+                            </div>
+                            <div class="arrow-icon text-slate-300 transition-transform duration-300"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></div>
+                        </button>
+                        <div class="folder-content p-4 pt-0">
+                            <div class="grid gap-2 border-t border-slate-100 pt-4 mt-1">
+                                ${files.map(f => `
+                                    <div class="flex items-center justify-between bg-white p-3 rounded-2xl shadow-sm group border border-transparent hover:border-indigo-100 transition-all">
+                                        <a href="${f.url_trabajo}" target="_blank" class="flex items-center gap-3 flex-1 min-w-0">
+                                            <div class="p-2 bg-slate-50 text-slate-400 rounded-lg group-hover:bg-indigo-600 group-hover:text-white"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
+                                            <span class="font-bold text-slate-600 text-xs truncate italic">${f.titulo_trabajo}</span>
+                                        </a>
+                                        ${esDueno ? `<button onclick="deleteWork('${f.id}')" class="p-2 text-slate-200 hover:text-red-500"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>` : ''}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                    listCont.appendChild(div);
+                });
+            });
+        };
+
+        // --- FORMS LOGIC ---
+        window.openModal = (id) => document.getElementById(id).style.display = 'flex';
+        window.closeModal = (id) => document.getElementById(id).style.display = 'none';
+
+        window.toggleAuthTab = (type) => {
+            const loginF = document.getElementById('loginForm');
+            const regF = document.getElementById('registerForm');
+            const tabL = document.getElementById('tabLoginBtn');
+            const tabR = document.getElementById('tabRegisterBtn');
+            if (type === 'login') {
+                loginF.classList.remove('hidden'); regF.classList.add('hidden');
+                tabL.className = "flex-1 py-2 text-sm font-bold rounded-lg bg-white text-indigo-600 shadow-sm";
+                tabR.className = "flex-1 py-2 text-sm font-bold rounded-lg text-slate-500";
+            } else {
+                loginF.classList.add('hidden'); regF.classList.remove('hidden');
+                tabR.className = "flex-1 py-2 text-sm font-bold rounded-lg bg-white text-indigo-600 shadow-sm";
+                tabL.className = "flex-1 py-2 text-sm font-bold rounded-lg text-slate-500";
+            }
+        };
+
+        // Register
+        document.getElementById('registerForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-password').value;
+            const name = document.getElementById('reg-name').value;
+            const race = document.getElementById('reg-race').value;
+            const photo = document.getElementById('reg-photo').value;
+            const genre = document.getElementById('reg-genre').value;
+
+            try {
+                const cred = await createUserWithEmailAndPassword(auth, email, pass);
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'usuarios', cred.user.uid), {
+                    full_name: name,
+                    email: email,
+                    race: race,
+                    user_photo: photo,
+                    genre: genre,
+                    information: {}
+                });
+                location.reload();
+            } catch (err) { alert("Error al registrar: " + err.message); }
+        };
+
+        // Login
+        document.getElementById('loginForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-password').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                location.reload();
+            } catch (err) { alert("Credenciales incorrectas"); }
+        };
+
+        // Edit Profile
+        const openEditModal = (data) => {
+            document.getElementById('edit-name').value = data.full_name;
+            document.getElementById('edit-race').value = data.race;
+            document.getElementById('edit-photo').value = data.user_photo;
+            
+            const cont = document.getElementById('dynamic-fields-container');
+            cont.innerHTML = '';
+            if(data.information) {
+                Object.entries(data.information).forEach(([k, v]) => addDynamicField(k, v));
+            }
+            openModal('editProfileModal');
+        };
+
+        window.addDynamicField = (k = '', v = '') => {
+            const div = document.createElement('div');
+            div.className = "flex items-end gap-2 bg-slate-50 p-4 rounded-3xl border border-slate-100";
+            div.innerHTML = `
+                <div class="flex-1">
+                    <input type="text" placeholder="Etiqueta" value="${k}" class="field-key w-full px-4 py-2 bg-white border-none rounded-xl text-xs font-bold" required>
+                </div>
+                <div class="flex-1">
+                    <input type="text" placeholder="Valor" value="${v}" class="field-val w-full px-4 py-2 bg-white border-none rounded-xl text-xs font-medium" required>
+                </div>
+                <button type="button" onclick="this.parentElement.remove()" class="p-2 text-red-400">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            `;
+            document.getElementById('dynamic-fields-container').appendChild(div);
+        };
+
+        document.getElementById('editProfileForm').onsubmit = async (e) => {
+            e.preventDefault();
+            if(!currentUser) return;
+            const info = {};
+            document.querySelectorAll('.field-key').forEach((el, i) => {
+                const val = document.querySelectorAll('.field-val')[i].value;
+                if(el.value) info[el.value] = val;
+            });
+
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'usuarios', currentUser.uid), {
+                full_name: document.getElementById('edit-name').value,
+                race: document.getElementById('edit-race').value,
+                user_photo: document.getElementById('edit-photo').value,
+                information: info
+            });
+            closeModal('editProfileModal');
+            loadProfile(currentUser.uid);
+        };
+
+        // Add Work
+        document.getElementById('portfolioForm').onsubmit = async (e) => {
+            e.preventDefault();
+            if(!currentUser) return;
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'portafolio'), {
+                usuario_id: currentUser.uid,
+                nombre_carpeta: document.getElementById('port-folder').value,
+                titulo_trabajo: document.getElementById('port-title').value,
+                url_trabajo: document.getElementById('port-url').value
+            });
+            closeModal('portfolioModal');
+            document.getElementById('portfolioForm').reset();
+        };
+
+        window.deleteWork = async (id) => {
+            if(confirm('¿Borrar este archivo?')) {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'portafolio', id));
+            }
+        };
+
+        // Start
+        initAuth().then(loadStudents);
+
+    </script>
+</body>
+</html>
