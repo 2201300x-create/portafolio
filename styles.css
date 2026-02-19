@@ -1,0 +1,329 @@
+/*Estilos Grobales*/
+body{
+    color: #000;
+    padding-bottom: 8rem;
+    margin: 0%;
+    line-height: inherit;
+    background-image: linear-gradient(rgba(248, 250, 252, 0.8), rgba(248, 250, 252, 0.8)), url('1.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+/*Etilos del perfil*/
+main{
+    max-width: 42rem;
+    min-height: 100vh;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.retry_home {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 
+              0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    background-image: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+    overflow: hidden;
+    height: 14rem;
+    position: relative;
+}
+
+.retry_home_color {
+    inset: 0px;
+    position: absolute;  
+}
+
+.retry_home_color a {
+    /* Posicionamiento */
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    z-index: 10;
+
+    /* Tamaño y forma */
+    display: flex;
+    align-items: center;
+    justify-center: center;
+    padding: 12px;
+    border-radius: 16px; /* Equivalente a rounded-2xl */
+
+    /* Estilo Glassmorphism (Efecto cristal) */
+    background-color: rgba(255, 255, 255, 0.2); /* Blanco con 20% opacidad */
+    backdrop-filter: blur(12px); /* El desenfoque del fondo */
+    color: white;
+    
+    /* Animación */
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.retry_home_color a:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+    transform: scale(1.05); /* Un pequeño plus: crece un poco al tocarlo */
+}
+
+.perfil {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    margin-top: -5rem;
+    z-index: 10;
+    position: relative;
+}
+
+.bg-user {
+    background: #fff;
+    padding: 2rem;
+    border-width: 1px;
+    border-radius: 3rem;   
+}
+
+.info {
+    text-align: center;
+    align-items: center;
+    flex-direction: column;
+    display: flex;
+}
+
+.relative {
+    position: relative;
+}
+
+.relative img {
+    background: #fff;
+    object-fit: cover;
+    border-radius: 2.5rem;
+    box-shadow: 
+        0 1px 1px -1px rgba(0, 0, 0, 0.1), 
+        0 10px 20px -5px rgba(0, 0, 0, 0.2);
+}
+
+.name_user {
+    color: #000;
+    line-height: 1.25;
+    font-weight: 800;
+    font-size: 1.875rem;
+    margin-top: 1.5rem;
+}
+
+.care {
+    color:rgb(79 70 229 / var(--tw-text-opacity, 1));
+    font-weight: 700;
+    font-size: .875rem;
+    line-height: 1.75rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-radius: 9999px;
+    margin-top: .5rem;
+    background-color: rgb(238 242 255 / var(--tw-bg-opacity, 1));
+}
+
+.info-user {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* Corregido: minmax */
+    gap: 1rem;
+    width: 100%;
+    margin-top: 2rem;
+    text-align: left;
+}
+
+.email-user {
+    padding: 1rem;
+    background-color: #f8fafc; /* slate-50 */
+    border: 1px solid #f1f5f9; /* slate-100 */
+    border-radius: 1.5rem;
+}
+
+.email {
+    color: #94a3b8; /* slate-400 */
+    font-size: 10px; /* text-[10px] */
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-style: italic;
+    margin-bottom: 0.25rem;
+}
+
+.email-text {
+    color: #334155; /* slate-700 */
+    font-size: 0.75rem; /* text-xs */
+    font-weight: 600;
+    line-height: 1rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin: 0;
+}
+
+.portafolio {
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+    margin-bottom: 1.5rem;
+}
+
+.portafolio h2{
+    color: rgb(30 41 59 / var(--tw-text-opacity, 1));
+    font-weight: 800;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    gap: .5rem;
+    align-items: center;
+    display: flex;
+}
+
+.portafolio svg {
+    color: rgb(99 102 241 / var(--tw-text-opacity, 1));
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.folders{
+    background: rgb(248 250 252 / 0.5);
+    border-color: rgb(241 245 249 / var(--tw-border-opacity, 1));
+    border-width: 1px;
+    border-radius: 2rem;
+    overflow: hidden;
+}
+
+.folder-btn {
+    width: 100%;
+    padding: 1.25rem; /* p-5 */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-radius: 0.5rem; /* Opcional, para suavizar bordes al hacer hover */
+}
+
+.folder-btn:hover {
+    background-color: #f1f5f9; /* hover:bg-slate-100 */
+}
+
+.folder-content-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* gap-3 */
+    text-align: left;
+}
+
+.folder-icon-bg {
+    padding: 0.5rem; /* p-2 */
+    background-color: #ffffff;
+    color: #4f46e5; /* text-indigo-600 */
+    border-radius: 0.75rem; /* rounded-xl */
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.folder-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.folder-title {
+    margin: 0;
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 700;
+    color: #1e293b; /* text-slate-800 */
+    line-height: 1.25;
+}
+
+.folder-subtitle {
+    font-size: 10px;
+    font-weight: 700;
+    color: #94a3b8; /* text-slate-400 */
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 2px;
+}
+
+.arrow-icon {
+    color: #cbd5e1; /* text-slate-300 */
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    padding-right: 19.5rem;
+}
+
+/* Efecto opcional: rotar flecha cuando esté expandido */
+.folder-btn[aria-expanded="true"] .arrow-icon {
+    transform: rotate(180deg);
+}
+
+/* Contenedor del contenido */
+.folder-content {
+    padding: 0 1rem 1rem 1rem; /* p-4 pt-0 */
+    display: none; /* Se oculta por defecto */
+}
+
+/* Cuando la carpeta está activa (puedes usar esta clase con JS) */
+.folder-content.active {
+    display: block;
+}
+
+/* Línea divisoria y espacio */
+.file-item {
+    border-top: 1px solid #f1f5f9; /* border-slate-100 */
+    padding-top: 1rem; /* pt-4 */
+    margin-top: 0.25rem; /* mt-1 */
+}
+
+/* La tarjeta del archivo individual */
+.file-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: #ffffff;
+    padding: 0.75rem;
+    border-radius: 1rem;
+    text-decoration: none;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.file-link:hover {
+    border-color: #e0e7ff; /* hover:border-indigo-100 */
+}
+
+/* Icono del archivo */
+.file-icon {
+    padding: 0.5rem;
+    background-color: #f8fafc;
+    color: #94a3b8;
+    border-radius: 0.5rem;
+    display: flex;
+    transition: all 0.2s ease;
+}
+
+.file-link:hover .file-icon {
+    background-color: #4f46e5; /* group-hover:bg-indigo-600 */
+    color: #ffffff;
+}
+
+/* Nombre del archivo */
+.file-name {
+    font-weight: 700;
+    color: #475569;
+    font-size: 0.75rem;
+    font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+
+@media (min-width: 768px) {
+    .retry_home{
+        border-bottom-right-radius: 3rem;
+        border-bottom-left-radius: 3rem;
+    }
+    .relative img{
+        width: 11 rem;
+        height: 11rem;
+
+    }
+}
