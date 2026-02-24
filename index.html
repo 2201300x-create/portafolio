@@ -4,15 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Portafolio - 2201300x</title>
-    <!-- Tailwind CSS para diseño rápido y moderno -->
+    <title>Mi Portafolio - Comparador de Consumo</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js para la gráfica de consumo -->
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- PDF.js para procesar el recibo -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
-        /* Integración de estilos originales ajustados */
         body {
             color: #000;
             padding-bottom: 8rem;
@@ -49,19 +46,6 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        .folder-btn {
-            width: 100%;
-            padding: 1.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: all 0.2s ease;
-        }
-
-        .folder-btn:hover {
-            background-color: #f1f5f9;
-        }
-
         .modal-overlay {
             display: none;
             position: fixed;
@@ -78,7 +62,7 @@
             background: white;
             border-radius: 2rem;
             width: 100%;
-            max-width: 600px;
+            max-width: 650px;
             max-height: 90vh;
             overflow-y: auto;
             padding: 2rem;
@@ -111,9 +95,16 @@
 
         .comparison-badge {
             font-size: 0.65rem;
-            padding: 2px 6px;
-            border-radius: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
             font-weight: bold;
+        }
+
+        /* Ocultar flechas de input number */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
     </style>
 </head>
@@ -159,46 +150,24 @@
                             </svg>
                             Portafolio
                         </h2>
-                        <!-- Botón para abrir el modal de comparativa -->
                         <button onclick="openModal()" class="btn-scan">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                             </svg>
-                            Comparar Recibos
+                            Comparar Consumo
                         </button>
                     </div>
 
-                    <div class="bg-slate-50/50 border border-slate-100 rounded-[2rem] overflow-hidden">
-                        <button onclick="toggleFolder(1)" id="btn-folder-1" class="folder-btn" aria-expanded="true">
-                            <div class="flex items-center gap-3 text-left">
-                                <div class="p-2 bg-white text-indigo-600 rounded-xl shadow-sm flex items-center justify-center">
-                                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"></path>
-                                    </svg>
-                                </div>
-                                <div class="flex flex-col">
-                                    <h3 class="text-sm font-bold text-slate-800 leading-none">Probabilidad y Estadística</h3>
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">1 ARCHIVOS</span>
-                                </div>
-                            </div>
-                            <div class="arrow-icon text-slate-300 transition-transform duration-300">
-                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-                                    <path d="m6 9 6 6 6-6"></path>
+                    <div class="bg-slate-50/50 border border-slate-100 rounded-[2rem] overflow-hidden p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-white text-indigo-600 rounded-xl shadow-sm">
+                                <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"></path>
                                 </svg>
                             </div>
-                        </button>
-
-                        <div id="content-folder-1" class="px-4 pb-4">
-                            <div class="border-t border-slate-100 pt-4 mt-1">
-                                <a href="#" class="flex items-center gap-3 bg-white p-3 rounded-2xl shadow-sm border border-transparent hover:border-indigo-100 transition-all group">
-                                    <div class="p-2 bg-slate-50 text-slate-400 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-all">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                                        </svg>
-                                    </div>
-                                    <span class="font-bold text-slate-600 text-xs italic truncate">Demanda Eléctrica en México</span>
-                                </a>
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-800">Herramientas de Análisis</h3>
+                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Módulo de comparación activo</p>
                             </div>
                         </div>
                     </div>
@@ -208,12 +177,12 @@
     </main>
 
     <!-- Modal de Análisis y Comparativa -->
-    <div id="uploadModal" class="modal-overlay flex">
+    <div id="uploadModal" class="modal-overlay">
         <div class="modal-content shadow-2xl">
             <div class="flex justify-between items-center mb-6">
                 <div>
-                    <h3 class="text-xl font-bold text-slate-800">Comparativa de Datos CFE</h3>
-                    <p class="text-xs text-slate-400">Analiza y compara tu consumo histórico</p>
+                    <h3 class="text-xl font-bold text-slate-800">Comparativa de Consumo</h3>
+                    <p class="text-xs text-slate-400">Ingresa los datos para ver quién gasta más</p>
                 </div>
                 <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -222,42 +191,46 @@
                 </button>
             </div>
 
-            <div id="upload-step" class="text-center py-8 border-2 border-dashed border-slate-200 rounded-3xl bg-slate-50">
-                <svg class="w-12 h-12 text-indigo-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m3 2h12M9 5a2 2 0 114 0 2 2 0 01-4 0z"></path>
-                </svg>
-                <p class="text-slate-600 font-medium mb-4">Sube el PDF del recibo para comparar</p>
-                <input type="file" id="pdfInput" accept="application/pdf" class="hidden" onchange="handleFileUpload(event)">
-                <button onclick="document.getElementById('pdfInput').click()" class="bg-indigo-600 text-white px-6 py-2 rounded-xl font-bold hover:bg-indigo-700 transition-colors">
-                    Cargar y Analizar
-                </button>
+            <!-- Paso 1: Entrada de Datos -->
+            <div id="input-step">
+                <div id="people-container" class="space-y-3 mb-6">
+                    <!-- Filas dinámicas aquí -->
+                </div>
+
+                <div class="flex gap-3">
+                    <button onclick="addPersonRow()" class="flex-1 py-3 border-2 border-dashed border-indigo-200 text-indigo-500 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-indigo-50 transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Agregar Persona
+                    </button>
+                    <button onclick="processData()" class="px-8 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all">
+                        Comparar
+                    </button>
+                </div>
             </div>
 
-            <div id="loading-step" class="hidden text-center py-8">
-                <div class="animate-spin rounded-full h-12 w-12 border-4 border-indigo-600 border-t-transparent mx-auto mb-4"></div>
-                <p class="text-slate-600 font-bold">Extrayendo datos para comparativa...</p>
-            </div>
-
+            <!-- Paso 2: Resultados -->
             <div id="result-step" class="hidden">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <!-- Datos Actuales -->
-                    <div class="bg-indigo-50 p-4 rounded-2xl">
-                        <h4 class="text-indigo-900 font-bold text-xs uppercase mb-2">Lectura Actual</h4>
-                        <div class="flex justify-between items-end">
+                    <!-- Mayor Consumo -->
+                    <div class="bg-red-50 p-4 rounded-2xl border border-red-100">
+                        <h4 class="text-red-900 font-bold text-[10px] uppercase mb-1">Mayor Consumo</h4>
+                        <div class="flex justify-between items-center">
                             <div>
-                                <p id="last-kwh" class="text-2xl font-black text-indigo-700">0 kWh</p>
-                                <p id="last-amount" class="text-sm font-bold text-indigo-400">$0.00</p>
+                                <p id="max-name" class="text-lg font-black text-red-700">-</p>
+                                <p id="max-kwh" class="text-sm font-bold text-red-400">0 kWh</p>
                             </div>
-                            <div id="diff-badge" class="comparison-badge bg-red-100 text-red-600">
-                                +12% vs Anterior
+                            <div class="p-2 bg-red-100 text-red-600 rounded-full">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>
                             </div>
                         </div>
                     </div>
                     <!-- Promedio -->
-                    <div class="bg-slate-50 p-4 rounded-2xl">
-                        <h4 class="text-slate-500 font-bold text-xs uppercase mb-2">Promedio Histórico</h4>
-                        <p id="avg-kwh" class="text-2xl font-black text-slate-700">225 kWh</p>
-                        <p class="text-xs text-slate-400 font-medium italic">Basado en últimos 6 meses</p>
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <h4 class="text-slate-500 font-bold text-[10px] uppercase mb-1">Promedio Grupal</h4>
+                        <p id="avg-kwh" class="text-lg font-black text-slate-700">0 kWh</p>
+                        <p class="text-[10px] text-slate-400 font-medium italic">Basado en los datos ingresados</p>
                     </div>
                 </div>
                 
@@ -265,124 +238,98 @@
                     <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4"></path>
                     </svg>
-                    Tendencia de Consumo
+                    Comparativa de Gastos
                 </h4>
                 <div class="chart-container">
                     <canvas id="consumptionChart"></canvas>
                 </div>
-                
-                <div class="mt-6 p-4 border border-indigo-100 rounded-2xl bg-indigo-50/30">
-                    <p class="text-xs text-slate-600 leading-relaxed">
-                        <strong class="text-indigo-600">Conclusión de Comparativa:</strong> 
-                        Tu consumo actual es <span id="comparison-text">mayor</span> que el promedio. 
-                        Se detectó un incremento en la temporada de <span class="font-bold">ENE25</span>.
-                    </p>
-                </div>
 
-                <button onclick="resetUpload()" class="mt-6 w-full py-3 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-all">
-                    Comparar otro recibo
+                <button onclick="showInputs()" class="mt-6 w-full py-3 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-all">
+                    Modificar datos
                 </button>
             </div>
         </div>
     </div>
 
     <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
         let myChart = null;
-
-        function toggleFolder(id) {
-            const btn = document.getElementById(`btn-folder-${id}`);
-            const content = document.getElementById(`content-folder-${id}`);
-            const isOpen = btn.getAttribute('aria-expanded') === 'true';
-            btn.setAttribute('aria-expanded', !isOpen);
-            content.style.display = isOpen ? 'none' : 'block';
-            btn.querySelector('.arrow-icon').style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
-        }
+        let peopleCount = 0;
 
         function openModal() {
             document.getElementById('uploadModal').style.display = 'flex';
+            if (peopleCount === 0) {
+                // Agregar 2 filas por defecto la primera vez
+                addPersonRow('David', 170);
+                addPersonRow('Promedio CFE', 217);
+            }
         }
 
         function closeModal() {
             document.getElementById('uploadModal').style.display = 'none';
-            resetUpload();
         }
 
-        function resetUpload() {
-            document.getElementById('upload-step').classList.remove('hidden');
-            document.getElementById('loading-step').classList.add('hidden');
+        function addPersonRow(name = '', kwh = '') {
+            peopleCount++;
+            const container = document.getElementById('people-container');
+            const row = document.createElement('div');
+            row.className = 'flex items-center gap-2 bg-slate-50 p-3 rounded-2xl border border-slate-100 group animate-in slide-in-from-left duration-300';
+            row.id = `person-row-${peopleCount}`;
+            
+            row.innerHTML = `
+                <div class="flex-1">
+                    <input type="text" placeholder="Nombre" value="${name}" class="w-full bg-transparent border-none focus:ring-0 text-sm font-bold text-slate-700 placeholder:text-slate-300" data-type="name">
+                </div>
+                <div class="w-24 relative">
+                    <input type="number" placeholder="kWh" value="${kwh}" class="w-full bg-white border border-slate-200 rounded-lg py-1 px-2 text-sm font-black text-indigo-600 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 outline-none" data-type="kwh">
+                    <span class="absolute right-2 top-1.5 text-[8px] font-bold text-slate-400">kWh</span>
+                </div>
+                <button onclick="removeRow(${peopleCount})" class="p-2 text-slate-300 hover:text-red-500 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            `;
+            container.appendChild(row);
+        }
+
+        function removeRow(id) {
+            const row = document.getElementById(`person-row-${id}`);
+            row.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => row.remove(), 200);
+        }
+
+        function showInputs() {
+            document.getElementById('input-step').classList.remove('hidden');
             document.getElementById('result-step').classList.add('hidden');
-            document.getElementById('pdfInput').value = '';
         }
 
-        async function handleFileUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+        function processData() {
+            const names = Array.from(document.querySelectorAll('[data-type="name"]')).map(i => i.value || 'Anónimo');
+            const kwhs = Array.from(document.querySelectorAll('[data-type="kwh"]')).map(i => parseFloat(i.value) || 0);
 
-            document.getElementById('upload-step').classList.add('hidden');
-            document.getElementById('loading-step').classList.remove('hidden');
+            if (names.length === 0) return;
 
-            try {
-                const reader = new FileReader();
-                reader.onload = async function() {
-                    const typedarray = new Uint8Array(this.result);
-                    const pdf = await pdfjsLib.getDocument(typedarray).promise;
-                    
-                    let fullText = "";
-                    for(let i = 1; i <= Math.min(pdf.numPages, 2); i++) {
-                        const page = await pdf.getPage(i);
-                        const content = await page.getTextContent();
-                        fullText += content.items.map(item => item.str).join(" ");
-                    }
+            const total = kwhs.reduce((a, b) => a + b, 0);
+            const avg = total / kwhs.length;
+            const maxVal = Math.max(...kwhs);
+            const maxName = names[kwhs.indexOf(maxVal)];
 
-                    // Datos para comparar (Simulados)
-                    const data = {
-                        labels: ['MAR24', 'MAY24', 'JUL24', 'SEP24', 'NOV24', 'ENE25', 'MAR25', 'MAY25', 'JUL25', 'SEP25', 'NOV25'],
-                        consumption: [140, 226, 228, 235, 274, 277, 252, 258, 217, 211, 170],
-                        lastKwh: 170,
-                        lastAmount: "$270.00",
-                        avg: 217
-                    };
-
-                    setTimeout(() => renderResults(data), 1200);
-                };
-                reader.readAsArrayBuffer(file);
-            } catch (error) {
-                console.error("Error:", error);
-                setTimeout(() => renderResults({
-                    labels: ['MAR24', 'MAY24', 'JUL24', 'SEP24', 'NOV24', 'ENE25', 'MAR25', 'MAY25', 'JUL25', 'SEP25', 'NOV25'],
-                    consumption: [140, 226, 228, 235, 274, 277, 252, 258, 217, 211, 170],
-                    lastKwh: 170,
-                    lastAmount: "$270.00",
-                    avg: 217
-                }), 1200);
-            }
+            renderResults({
+                labels: names,
+                data: kwhs,
+                avg: avg,
+                maxName: maxName,
+                maxVal: maxVal
+            });
         }
 
-        function renderResults(data) {
-            document.getElementById('loading-step').classList.add('hidden');
+        function renderResults(res) {
+            document.getElementById('input-step').classList.add('hidden');
             document.getElementById('result-step').classList.remove('hidden');
 
-            document.getElementById('last-kwh').innerText = `${data.lastKwh} kWh`;
-            document.getElementById('last-amount').innerText = data.lastAmount;
-            document.getElementById('avg-kwh').innerText = `${data.avg} kWh`;
-
-            // Lógica de comparativa simple
-            const diff = data.lastKwh - data.avg;
-            const perc = ((diff / data.avg) * 100).toFixed(1);
-            const badge = document.getElementById('diff-badge');
-            const compText = document.getElementById('comparison-text');
-
-            if (diff > 0) {
-                badge.innerText = `+${perc}% vs Promedio`;
-                badge.className = "comparison-badge bg-red-100 text-red-600";
-                compText.innerText = "mayor";
-            } else {
-                badge.innerText = `${perc}% vs Promedio`;
-                badge.className = "comparison-badge bg-green-100 text-green-600";
-                compText.innerText = "menor";
-            }
+            document.getElementById('max-name').innerText = res.maxName;
+            document.getElementById('max-kwh').innerText = `${res.maxVal} kWh`;
+            document.getElementById('avg-kwh').innerText = `${res.avg.toFixed(1)} kWh`;
 
             const ctx = document.getElementById('consumptionChart').getContext('2d');
             if (myChart) myChart.destroy();
@@ -390,23 +337,20 @@
             myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: data.labels,
+                    labels: res.labels,
                     datasets: [
                         {
                             label: 'Consumo (kWh)',
-                            data: data.consumption,
-                            backgroundColor: (context) => {
-                                const index = context.dataIndex;
-                                return index === data.consumption.length - 1 ? '#6366f1' : '#cbd5e1';
-                            },
-                            borderRadius: 6,
-                            barThickness: 18
+                            data: res.data,
+                            backgroundColor: res.data.map(v => v === res.maxVal ? '#ef4444' : '#6366f1'),
+                            borderRadius: 12,
+                            barThickness: 30
                         },
                         {
-                            label: 'Promedio Histórico',
-                            data: Array(data.labels.length).fill(data.avg),
+                            label: 'Promedio del Grupo',
+                            data: Array(res.labels.length).fill(res.avg),
                             type: 'line',
-                            borderColor: '#a855f7',
+                            borderColor: '#94a3b8',
                             borderDash: [5, 5],
                             borderWidth: 2,
                             pointRadius: 0,
@@ -421,17 +365,26 @@
                         legend: { 
                             display: true,
                             position: 'bottom',
-                            labels: { boxWidth: 10, font: { size: 10, weight: 'bold' } }
+                            labels: { usePointStyle: true, font: { size: 10, weight: 'bold' } }
+                        },
+                        tooltip: {
+                            backgroundColor: '#1e293b',
+                            padding: 12,
+                            titleFont: { size: 14, weight: 'bold' },
+                            callbacks: {
+                                label: (context) => `Consumo: ${context.raw} kWh`
+                            }
                         }
                     },
                     scales: {
                         y: { 
                             beginAtZero: true,
+                            grid: { color: '#f1f5f9' },
                             ticks: { font: { size: 10 } }
                         },
                         x: { 
                             grid: { display: false },
-                            ticks: { font: { size: 9, weight: 'bold' } }
+                            ticks: { font: { size: 11, weight: 'bold' } }
                         }
                     }
                 }
