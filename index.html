@@ -1,424 +1,574 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>David Cortes - Analizador CFE</title>
-    <!-- Tailwind CSS -->
+    <title>Mi Portafolio - Analizador CFE</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <style>
         body {
-            color: #000;
-            padding-bottom: 8rem;
-            margin: 0%;
-            background-image: linear-gradient(rgba(248, 250, 252, 0.9), rgba(248, 250, 252, 0.9)), url('1.png');
-            background-repeat: no-repeat;
-            background-size: cover;
-            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color:#000; padding-bottom:8rem; margin:0;
+            background-image:linear-gradient(rgba(248,250,252,.85),rgba(248,250,252,.85)),url('1.png');
+            background-repeat:no-repeat; background-size:cover;
+            font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
         }
-
         .retry_home {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            background-image: linear-gradient(135deg, #059669, #10b981, #34d399);
-            height: 14rem;
-            position: relative;
-            border-bottom-right-radius: 3rem;
-            border-bottom-left-radius: 3rem;
+            box-shadow:0 10px 15px -3px rgba(0,0,0,.1);
+            background-image:linear-gradient(135deg,#6366f1,#a855f7,#ec4899);
+            height:14rem; position:relative;
+            border-bottom-right-radius:3rem; border-bottom-left-radius:3rem;
         }
+        .perfil { padding:0 1.5rem; margin-top:-5rem; z-index:10; position:relative; max-width:45rem; margin-left:auto; margin-right:auto; }
+        .bg-user { background:#fff; padding:2rem; border-radius:3rem; box-shadow:0 4px 6px -1px rgba(0,0,0,.1); }
 
-        .perfil {
-            padding: 0 1.5rem;
-            margin-top: -5rem;
-            z-index: 10;
-            position: relative;
-            max-width: 45rem;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .bg-user {
-            background: #fff;
-            padding: 2rem;
-            border-radius: 3rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-
+        /* ── Modales ── */
         .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(8px);
-            z-index: 50;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
+            display:none; position:fixed; inset:0;
+            background:rgba(0,0,0,.55); backdrop-filter:blur(5px);
+            z-index:50; align-items:center; justify-content:center; padding:1rem;
         }
-
         .modal-content {
-            background: white;
-            border-radius: 2.5rem;
-            width: 100%;
-            max-width: 550px;
-            max-height: 90vh;
-            overflow-y: auto;
-            padding: 2rem;
+            background:#fff; border-radius:2rem; width:100%;
+            max-width:680px; max-height:93vh; overflow-y:auto;
+            padding:2rem; box-shadow:0 25px 60px rgba(0,0,0,.2);
         }
+        .modal-wide { max-width:900px; }
 
-        .chart-container {
-            position: relative;
-            height: 250px;
-            width: 100%;
-            margin-top: 1rem;
-        }
-
+        /* ── Botones header ── */
         .btn-scan {
-            background: #059669;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 9999px;
-            font-size: 0.875rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background:#6366f1; color:white; padding:.5rem 1rem; border-radius:9999px;
+            font-size:.875rem; font-weight:600; display:flex; align-items:center;
+            gap:.5rem; transition:all .2s; cursor:pointer; border:none;
+        }
+        .btn-scan:hover { background:#4f46e5; transform:scale(1.05); }
+        .btn-multi { background:#10b981; }
+        .btn-multi:hover { background:#059669; }
+
+        /* ── Drop zone ── */
+        .drop-zone {
+            border:2px dashed #c7d2fe; border-radius:1.5rem; padding:2.5rem 2rem;
+            text-align:center; cursor:pointer; transition:all .25s; background:#f5f3ff;
+        }
+        .drop-zone:hover, .drop-zone.over { border-color:#6366f1; background:#ede9fe; }
+        .drop-zone input { display:none; }
+        .drop-zone-green { border-color:#a7f3d0; background:#f0fdf4; }
+        .drop-zone-green:hover, .drop-zone-green.over { border-color:#10b981; background:#dcfce7; }
+
+        /* ── Chips ── */
+        .file-chip {
+            display:inline-flex; align-items:center; gap:.4rem;
+            background:#e0e7ff; color:#4338ca;
+            padding:.3rem .8rem; border-radius:9999px; font-size:.75rem; font-weight:700;
         }
 
-        .btn-scan:hover {
-            background: #047857;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(5, 150, 105, 0.3);
+        /* ── Spinner ── */
+        .spinner { width:38px; height:38px; border:4px solid #e0e7ff; border-top-color:#6366f1; border-radius:50%; animation:girar .8s linear infinite; margin:0 auto; }
+        .spinner-green { border-color:#a7f3d0; border-top-color:#10b981; }
+        @keyframes girar { to { transform:rotate(360deg); } }
+        .barra-fondo { background:#e0e7ff; border-radius:9999px; height:6px; overflow:hidden; }
+        .barra-fill  { height:100%; background:linear-gradient(90deg,#6366f1,#a855f7); border-radius:9999px; transition:width .3s; }
+        .barra-fill-green { background:linear-gradient(90deg,#10b981,#06b6d4); }
+
+        /* ── Cards resultado simple ── */
+        .card-id   { background:#fff; border:1px solid #e2e8f0; border-radius:1.25rem; padding:1.1rem; }
+        .card-blue { background:#1d4ed8; border-radius:1.25rem; padding:1.25rem; color:#fff; }
+        .card-pay  { background:#fff; border:1px solid #e2e8f0; border-radius:1.25rem; padding:1.1rem; }
+        .eng-card  { background:#f8fafc; border:1px solid #e2e8f0; border-radius:1.25rem; padding:1rem; }
+        .bl-blue   { border-left:4px solid #3b82f6; padding-left:.75rem; }
+        .bl-yellow { border-left:4px solid #f59e0b; padding-left:.75rem; }
+        .hist-row  { display:flex; justify-content:space-between; align-items:center; padding:.65rem 0; border-bottom:1px solid #f1f5f9; font-size:.78rem; }
+        .hist-row:last-child { border-bottom:none; }
+        .caja-cruda { background:#1e293b; color:#94a3b8; border-radius:1rem; padding:1rem; font-size:.68rem; font-family:monospace; max-height:160px; overflow-y:auto; line-height:1.7; white-space:pre-wrap; word-break:break-all; }
+        .badge-ok { background:#dcfce7; color:#166534; font-size:.65rem; padding:2px 10px; border-radius:6px; font-weight:700; }
+
+        /* ── Tabs ── */
+        .tab-btn { padding:.45rem 1rem; border-radius:9999px; font-size:.78rem; font-weight:700; cursor:pointer; border:none; transition:all .2s; }
+        .tab-btn.active { background:#6366f1; color:#fff; }
+        .tab-btn:not(.active) { background:#f1f5f9; color:#64748b; }
+        .mtab-btn { padding:.4rem .9rem; border-radius:9999px; font-size:.75rem; font-weight:700; cursor:pointer; border:none; transition:all .2s; }
+        .mtab-btn.active { background:#10b981; color:#fff; }
+        .mtab-btn:not(.active) { background:#f1f5f9; color:#64748b; }
+
+        /* ── Chart container ── */
+        .chart-container { position:relative; height:280px; width:100%; margin-top:1.25rem; }
+        .chart-container-sm { position:relative; height:220px; width:100%; }
+
+        /* ── Modal múltiple: cola de archivos ── */
+        .recibo-fila {
+            display:flex; align-items:center; gap:.6rem;
+            background:#f8fafc; border-radius:1rem; padding:.6rem .8rem;
+            border-left:4px solid #6366f1; margin-bottom:.4rem;
+        }
+        .recibo-num {
+            width:22px; height:22px; border-radius:50%;
+            background:#6366f1; color:#fff;
+            font-size:.65rem; font-weight:900;
+            display:flex; align-items:center; justify-content:center; flex-shrink:0;
+        }
+        .recibo-num-sm {
+            display:inline-flex; align-items:center; justify-content:center;
+            width:20px; height:20px; border-radius:50%;
+            color:#fff; font-size:.6rem; font-weight:900; flex-shrink:0;
         }
 
-        /* Scanner Animation */
-        .scanner-line {
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(to right, transparent, #10b981, transparent);
-            position: absolute;
-            top: 0;
-            left: 0;
-            animation: scan 2s linear infinite;
-            display: none;
-        }
+        /* ── Estado chips de la cola ── */
+        .estado-chip { font-size:.6rem; font-weight:700; padding:2px 8px; border-radius:9999px; flex-shrink:0; }
+        .chip-pendiente  { background:#e0e7ff; color:#4338ca; }
+        .chip-procesando { background:#fef9c3; color:#854d0e; }
+        .chip-listo      { background:#dcfce7; color:#166534; }
+        .chip-error      { background:#fee2e2; color:#991b1b; }
 
-        @keyframes scan {
-            0% { top: 0%; opacity: 0; }
-            50% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
-        }
+        /* ── Tabla resultado múltiple ── */
+        .tabla-fila { border-bottom:1px solid #f1f5f9; }
+        .tabla-fila:last-child { border-bottom:none; }
+        .tabla-fila:hover { background:#f8fafc; }
+        .tabla-td { padding:.6rem .5rem; vertical-align:middle; }
+        .tarifa-badge { font-size:.6rem; font-weight:700; padding:2px 7px; border-radius:9999px; white-space:nowrap; }
 
-        /* Ocultar scrollbar en modal */
-        .modal-content::-webkit-scrollbar {
-            width: 0px;
-        }
+        /* ── Stat cards múltiple ── */
+        .stat-card { background:#f8fafc; border:1px solid #e2e8f0; border-radius:1.25rem; padding:1rem; text-align:center; }
+        .stat-card-red { background:#fef2f2; border-color:#fecaca; }
+        .stat-card-green { background:#f0fdf4; border-color:#bbf7d0; }
+
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
     </style>
 </head>
-
 <body>
-    <main>
-        <div class="retry_home">
-            <div class="absolute top-6 left-6 z-10">
-                <a href="#" class="p-3 bg-white/20 backdrop-blur-md rounded-2xl text-white flex hover:bg-white/40 transition-all">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                        <path d="m15 18-6-6 6-6"></path>
-                    </svg>
-                </a>
-            </div>
-        </div>
 
-        <div class="perfil">
-            <div class="bg-user">
-                <div class="flex flex-col items-center text-center">
-                    <div class="relative">
-                        <img src="OIP.webp" alt="Avatar" class="w-32 h-32 bg-white object-cover rounded-[2.5rem] shadow-xl border-4 border-white" onerror="this.src='https://ui-avatars.com/api/?name=David+Cortes&background=059669&color=fff'">
-                    </div>
-                    <h1 class="text-3xl font-extrabold mt-6 text-slate-800">David Cortes Cortes</h1>
-                    <p class="bg-emerald-50 text-emerald-600 px-4 py-1 rounded-full text-sm font-bold mt-2">Ingeniero en Computación</p>
-
-                    <div class="grid grid-cols-2 gap-4 w-full mt-8 text-left">
-                        <div class="p-4 bg-slate-50 border border-slate-100 rounded-3xl">
-                            <p class="text-[10px] font-black text-slate-400 uppercase italic mb-1">Email:</p>
-                            <p class="text-xs font-semibold text-slate-700 truncate">2201300x@umich.mx</p>
-                        </div>
-                        <div class="p-4 bg-slate-50 border border-slate-100 rounded-3xl">
-                            <p class="text-[10px] font-black text-slate-400 uppercase italic mb-1">Género:</p>
-                            <p class="text-xs font-semibold text-slate-700 truncate">Masculino</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-8">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="flex items-center gap-2 text-xl font-extrabold text-slate-800">
-                            <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                            Servicios IA
-                        </h2>
-                        <button onclick="openModal()" class="btn-scan">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            </svg>
-                            Lector de Recibos
-                        </button>
-                    </div>
-
-                    <div class="bg-slate-50/50 border border-slate-100 rounded-[2rem] overflow-hidden p-5">
-                        <div class="flex items-center gap-4">
-                            <div class="p-3 bg-white text-emerald-600 rounded-2xl shadow-sm">
-                                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-bold text-slate-800">Optimización Energética</h3>
-                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Módulo de Visión Computacional Activo</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Modal del Analizador CFE -->
-    <div id="uploadModal" class="modal-overlay">
-        <div class="modal-content shadow-2xl">
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <h3 class="text-xl font-bold text-slate-800">Lector Inteligente CFE</h3>
-                    <p class="text-xs text-slate-400 font-medium">Extrae datos de consumo automáticamente</p>
-                </div>
-                <button onclick="closeModal()" class="p-2 bg-slate-100 text-slate-400 hover:text-red-500 rounded-full transition-all">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Paso 1: Carga de Archivo -->
-            <div id="input-step">
-                <div id="drop-zone" class="relative group border-2 border-dashed border-emerald-200 rounded-[2.5rem] p-12 text-center hover:bg-emerald-50/50 hover:border-emerald-400 transition-all cursor-pointer">
-                    <div id="scanner-line" class="scanner-line"></div>
-                    <input type="file" id="fileInput" class="hidden" accept="image/*">
-                    
-                    <div id="upload-placeholder">
-                        <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                            </svg>
-                        </div>
-                        <p class="text-sm font-bold text-slate-700">Toca para subir o arrastra el recibo</p>
-                        <p class="text-[10px] text-slate-400 mt-2 font-semibold">JPG, PNG o PDF (Máx. 5MB)</p>
-                    </div>
-
-                    <div id="file-preview" class="hidden flex flex-col items-center">
-                        <div class="relative inline-block">
-                            <img id="preview-img" class="h-32 w-auto rounded-xl shadow-md border-2 border-white mb-2" src="#">
-                            <div class="absolute inset-0 bg-black/10 rounded-xl"></div>
-                        </div>
-                        <p id="file-name" class="text-xs font-bold text-emerald-600 truncate max-w-[200px]"></p>
-                    </div>
-                </div>
-
-                <button id="btn-process" onclick="simulateScan()" class="mt-6 w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold hover:bg-emerald-700 shadow-lg shadow-emerald-100 transition-all hidden flex items-center justify-center gap-2">
-                    <span id="btn-text">Escanear Recibo ahora</span>
-                    <svg id="loader-svg" class="hidden animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Paso 2: Dashboard de Resultados -->
-            <div id="result-step" class="hidden animate-in fade-in zoom-in duration-500">
-                <div class="grid grid-cols-2 gap-3 mb-6">
-                    <div class="bg-emerald-50 p-4 rounded-3xl border border-emerald-100">
-                        <p class="text-[9px] font-black text-emerald-400 uppercase tracking-widest mb-1">Total a Pagar</p>
-                        <p id="res-total" class="text-2xl font-black text-emerald-700">$0.00</p>
-                    </div>
-                    <div class="bg-slate-50 p-4 rounded-3xl border border-slate-100">
-                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Consumo Total</p>
-                        <p id="res-kwh" class="text-2xl font-black text-slate-700">0 kWh</p>
-                    </div>
-                </div>
-
-                <div class="bg-slate-50/50 rounded-3xl p-5 border border-slate-100 mb-6">
-                    <h4 class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">Detalles del Servicio</h4>
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-                            <span class="text-xs font-semibold text-slate-500">Número de Servicio</span>
-                            <span id="res-servicio" class="text-xs font-bold text-slate-800">---</span>
-                        </div>
-                        <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-                            <span class="text-xs font-semibold text-slate-500">Tarifa Aplicada</span>
-                            <span id="res-tarifa" class="text-xs font-bold text-slate-800">---</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-semibold text-slate-500">Periodo</span>
-                            <span id="res-periodo" class="text-xs font-bold text-slate-800 italic">---</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2 px-1">
-                    <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
-                    </svg>
-                    Niveles de Consumo (kWh)
-                </h4>
-                <div class="chart-container">
-                    <canvas id="consumptionChart"></canvas>
-                </div>
-
-                <button onclick="resetUI()" class="mt-8 w-full py-3 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all flex items-center justify-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                    </svg>
-                    Escanear otro recibo
-                </button>
-            </div>
+<!-- ═══════════ PORTAFOLIO ═══════════ -->
+<main>
+    <div class="retry_home">
+        <div class="absolute top-6 left-6 z-10">
+            <a href="#" class="p-3 bg-white/20 backdrop-blur-md rounded-2xl text-white flex hover:bg-white/40 transition-all">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="3"><path d="m15 18-6-6 6-6"/></svg>
+            </a>
         </div>
     </div>
 
-    <script>
-        let myChart = null;
-        const fileInput = document.getElementById('fileInput');
-        const dropZone = document.getElementById('drop-zone');
+    <div class="perfil">
+        <div class="bg-user">
+            <div class="flex flex-col items-center text-center">
+                <img src="OIP.webp" alt="Avatar" class="w-32 h-32 bg-white object-cover rounded-[2.5rem] shadow-xl"
+                     onerror="this.src='https://ui-avatars.com/api/?name=David+Cortes&background=6366f1&color=fff'">
+                <h1 class="text-3xl font-extrabold mt-6">David Cortes Cortes</h1>
+                <p class="bg-indigo-50 text-indigo-600 px-4 py-1 rounded-full text-sm font-bold mt-2">Ingeniero en Computacion</p>
+                <div class="grid grid-cols-2 gap-4 w-full mt-8 text-left">
+                    <div class="p-4 bg-slate-50 border border-slate-100 rounded-3xl">
+                        <p class="text-[10px] font-black text-slate-400 uppercase italic mb-1">Email:</p>
+                        <p class="text-xs font-semibold text-slate-700 truncate">david@email.com</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 border border-slate-100 rounded-3xl">
+                        <p class="text-[10px] font-black text-slate-400 uppercase italic mb-1">Genero:</p>
+                        <p class="text-xs font-semibold text-slate-700">Masculino</p>
+                    </div>
+                </div>
+            </div>
 
-        function openModal() {
-            document.getElementById('uploadModal').style.display = 'flex';
-        }
+            <div class="mt-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="flex items-center gap-2 text-xl font-extrabold text-slate-800">
+                        <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+                        </svg>
+                        Portafolio
+                    </h2>
+                    <!-- BOTONES -->
+                    <div class="flex gap-2">
+                        <button onclick="abrirModal()" class="btn-scan">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            Leer Recibo
+                        </button>
+                        <button onclick="abrirModalMultiple()" class="btn-scan btn-multi">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
+                            </svg>
+                            Comparar Varios
+                        </button>
+                    </div>
+                </div>
+                <div class="bg-slate-50/50 border border-slate-100 rounded-[2rem] p-4">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-white text-indigo-600 rounded-xl shadow-sm">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-800">Herramientas de Analisis CFE</h3>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Lector simple · Comparador multiple</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
 
-        function closeModal() {
-            document.getElementById('uploadModal').style.display = 'none';
-            resetUI();
-        }
 
-        // Manejo de Archivos
-        dropZone.onclick = () => fileInput.click();
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- MODAL 1: LECTOR SIMPLE                                         -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="cfeModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="flex justify-between items-center mb-5">
+            <div>
+                <h3 class="text-xl font-bold text-slate-800">Analisis de Recibo CFE</h3>
+                <p class="text-xs text-slate-400">Sube tu PDF o imagen y lo analizamos con OCR</p>
+            </div>
+            <button onclick="cerrarModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
 
-        fileInput.onchange = function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                handleFile(file);
-            }
-        };
+        <!-- SUBIDA -->
+        <div id="paso-subida">
+            <div class="drop-zone" id="zonaSubida"
+                 onclick="document.getElementById('inputArchivo').click()"
+                 ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+                <input type="file" id="inputArchivo" accept=".pdf,.jpg,.jpeg,.png,.webp" multiple onchange="onSeleccionArchivo(event)">
+                <div id="zonaVacia">
+                    <svg class="w-14 h-14 mx-auto text-indigo-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <p class="font-bold text-indigo-600">Arrastra tu recibo aqui</p>
+                    <p class="text-slate-400 text-xs mt-1">o haz clic para seleccionar · PDF · JPG · PNG · WebP</p>
+                </div>
+                <div id="zonaConArchivos" class="hidden">
+                    <svg class="w-10 h-10 mx-auto text-green-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <div id="listaArchivos" class="flex flex-wrap gap-2 justify-center mt-2"></div>
+                    <p class="text-slate-400 text-xs mt-2">Clic para agregar mas archivos</p>
+                </div>
+            </div>
+            <div id="errorSubida" class="hidden mt-3 bg-red-50 border border-red-200 rounded-2xl p-3 text-xs text-red-600 font-semibold"></div>
+            <div class="flex gap-3 mt-4">
+                <button id="btnProcesar" onclick="iniciarAnalisis()" disabled
+                    class="flex-1 py-3 bg-indigo-600 text-white rounded-2xl font-bold text-sm hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    Analizar Ahora
+                </button>
+                <button onclick="cargarDemo()" class="px-5 py-3 bg-slate-100 text-slate-500 rounded-2xl font-bold text-xs hover:bg-slate-200 transition-all">Demo</button>
+            </div>
+        </div>
 
-        function handleFile(file) {
-            document.getElementById('upload-placeholder').classList.add('hidden');
-            document.getElementById('file-preview').classList.remove('hidden');
-            document.getElementById('file-name').innerText = file.name;
-            document.getElementById('btn-process').classList.remove('hidden');
+        <!-- CARGANDO -->
+        <div id="paso-cargando" class="hidden py-8 text-center">
+            <div class="spinner mb-5"></div>
+            <p id="msgCarga" class="font-bold text-slate-700 text-sm mb-3">Procesando...</p>
+            <div class="barra-fondo mx-auto max-w-xs"><div class="barra-fill" id="barraProgreso" style="width:0%"></div></div>
+            <p id="textoPorcentaje" class="text-slate-400 text-xs mt-2">0%</p>
+        </div>
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('preview-img').src = e.target.result;
-            }
-            reader.readAsDataURL(file);
-        }
+        <!-- RESULTADO -->
+        <div id="paso-resultado" class="hidden">
+            <div class="flex gap-2 mb-5">
+                <button class="tab-btn active" onclick="cambiarTab('resumen',this)">Resumen</button>
+                <button class="tab-btn" onclick="cambiarTab('historial',this)">Historial</button>
+                <button class="tab-btn" onclick="cambiarTab('grafica',this)">Grafica</button>
+                <button class="tab-btn" onclick="cambiarTab('crudo',this)">Crudo</button>
+            </div>
 
-        function simulateScan() {
-            const btn = document.getElementById('btn-process');
-            const btnText = document.getElementById('btn-text');
-            const loader = document.getElementById('loader-svg');
-            const scannerLine = document.getElementById('scanner-line');
+            <!-- TAB RESUMEN -->
+            <div id="tab-resumen">
+                <div class="grid grid-cols-3 gap-3 mb-4">
+                    <div class="card-id">
+                        <p class="text-[9px] font-black text-slate-400 uppercase mb-2">Identificacion</p>
+                        <p class="text-[9px] text-slate-400">Titular:</p>
+                        <p id="r-titular" class="text-[11px] font-bold text-slate-800 leading-tight mb-1">-</p>
+                        <p class="text-[9px] text-slate-400">No. Servicio:</p>
+                        <p id="r-servicio" class="text-[11px] font-bold text-slate-800 mb-1">-</p>
+                        <p class="text-[9px] text-slate-400">Limite de Pago:</p>
+                        <p id="r-limite" class="text-[11px] font-bold text-red-600">-</p>
+                    </div>
+                    <div class="card-blue flex flex-col items-center justify-center text-center">
+                        <p class="text-[9px] font-bold text-blue-200 uppercase mb-1">Consumo Total</p>
+                        <p id="r-kwh" class="text-3xl font-black">-</p>
+                        <p class="text-xs text-blue-200 font-bold">kWh</p>
+                        <p class="text-[9px] text-blue-200 mt-2">Periodo:</p>
+                        <p id="r-periodo" class="text-[9px] font-bold text-white leading-tight">-</p>
+                    </div>
+                    <div class="card-pay">
+                        <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Total a Pagar</p>
+                        <p id="r-total" class="text-2xl font-black text-green-600 mb-2">-</p>
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-[9px]"><span class="text-slate-400">Energia:</span><span id="r-energia" class="font-bold text-slate-600">-</span></div>
+                            <div class="flex justify-between text-[9px]"><span class="text-slate-400">IVA 16%:</span><span id="r-iva" class="font-bold text-slate-600">-</span></div>
+                            <div class="flex justify-between text-[9px] font-black border-t border-slate-100 pt-1 mt-1"><span class="text-slate-600">Fac. Periodo:</span><span id="r-facperiodo" class="text-slate-800">-</span></div>
+                            <div class="flex justify-between text-[9px]"><span class="text-slate-400">DAP:</span><span id="r-dap" class="font-bold text-slate-600">-</span></div>
+                            <div class="flex justify-between text-[9px]"><span class="text-slate-400">Adeudo Ant.:</span><span id="r-adeudo" class="font-bold text-slate-600">-</span></div>
+                            <div class="flex justify-between text-[9px]"><span class="text-slate-400">Su Pago:</span><span id="r-pago" class="font-bold text-slate-600">-</span></div>
+                        </div>
+                        <div class="mt-2"><span class="badge-ok">Analizado</span></div>
+                    </div>
+                </div>
+                <div class="eng-card">
+                    <h4 class="font-black text-slate-800 text-sm mb-3">Analisis de Ingenieria</h4>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bl-blue"><p class="text-[10px] font-black text-slate-500 uppercase">Media Diaria</p><p id="r-media" class="text-base font-black text-slate-800">-</p></div>
+                        <div class="bl-yellow"><p class="text-[10px] font-black text-slate-500 uppercase">Clasificacion</p><p id="r-clasificacion" class="text-base font-black text-slate-800">-</p></div>
+                    </div>
+                </div>
+            </div>
 
-            btn.disabled = true;
-            btnText.innerText = "Procesando con IA...";
-            loader.classList.remove('hidden');
-            scannerLine.style.display = 'block';
+            <!-- TAB HISTORIAL -->
+            <div id="tab-historial" class="hidden">
+                <div class="eng-card">
+                    <h4 class="font-black text-slate-800 text-sm mb-3">Historial de Consumo</h4>
+                    <div id="r-historial"><p class="text-xs text-slate-400 italic">No se encontro historial.</p></div>
+                </div>
+            </div>
 
-            // Simulación de OCR y lógica de negocio CFE
-            setTimeout(() => {
-                const results = {
-                    total: Math.floor(Math.random() * (1200 - 450) + 450),
-                    kwh: 342,
-                    servicio: "721 042 100 " + Math.floor(Math.random() * 9000 + 1000),
-                    tarifa: "1D",
-                    periodo: "02 ENE 25 - 04 MAR 25",
-                    desglose: [150, 130, 62] // Básico, Intermedio, Excedente
-                };
-                
-                renderResults(results);
-                
-                // Limpiar efectos de carga
-                btn.disabled = false;
-                btnText.innerText = "Escanear Recibo ahora";
-                loader.classList.add('hidden');
-                scannerLine.style.display = 'none';
-            }, 2500);
-        }
+            <!-- TAB GRAFICA -->
+            <div id="tab-grafica" class="hidden">
+                <div class="eng-card">
+                    <h4 class="font-black text-slate-800 text-sm mb-2">Consumo historico (kWh)</h4>
+                    <div class="chart-container"><canvas id="cfeChart"></canvas></div>
+                </div>
+            </div>
 
-        function renderResults(res) {
-            document.getElementById('input-step').classList.add('hidden');
-            document.getElementById('result-step').classList.remove('hidden');
+            <!-- TAB CRUDO -->
+            <div id="tab-crudo" class="hidden">
+                <p class="text-xs font-bold text-slate-500 mb-2">Texto Crudo Extraido:</p>
+                <div class="caja-cruda" id="textoCrudo">Sin datos</div>
+            </div>
 
-            document.getElementById('res-total').innerText = `$${res.total.toLocaleString()}.00`;
-            document.getElementById('res-kwh').innerText = `${res.kwh} kWh`;
-            document.getElementById('res-servicio').innerText = res.servicio;
-            document.getElementById('res-tarifa').innerText = res.tarifa;
-            document.getElementById('res-periodo').innerText = res.periodo;
+            <div class="flex gap-3 mt-5">
+                <button onclick="reiniciarModal()" class="flex-1 py-3 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all text-sm">Analizar otro</button>
+                <button onclick="abrirComparativa()"
+                    class="flex-1 py-3 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all text-sm flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                    Comparar Consumo
+                </button>
+            </div>
+        </div>
 
-            const ctx = document.getElementById('consumptionChart').getContext('2d');
-            if (myChart) myChart.destroy();
+        <!-- ERROR -->
+        <div id="paso-error" class="hidden text-center py-8">
+            <svg class="w-14 h-14 mx-auto text-red-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+            <p class="font-bold text-red-600 text-sm">Error al analizar</p>
+            <p id="mensajeError" class="text-slate-400 text-xs mt-1 max-w-xs mx-auto"></p>
+            <button onclick="reiniciarModal()" class="mt-5 px-6 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all">Intentar de nuevo</button>
+        </div>
+    </div>
+</div>
 
-            myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Básico', 'Intermedio', 'Excedente'],
-                    datasets: [{
-                        label: 'kWh consumidos',
-                        data: res.desglose,
-                        backgroundColor: [
-                            'rgba(16, 185, 129, 0.8)', // Verde
-                            'rgba(245, 158, 11, 0.8)', // Naranja
-                            'rgba(239, 68, 68, 0.8)'   // Rojo
-                        ],
-                        borderRadius: 12,
-                        barThickness: 45
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: { 
-                            beginAtZero: true,
-                            grid: { color: '#f1f5f9' },
-                            ticks: { font: { size: 10, weight: 'bold' } }
-                        },
-                        x: { 
-                            grid: { display: false },
-                            ticks: { font: { size: 11, weight: 'bold' } }
-                        }
-                    }
-                }
-            });
-        }
+<!-- MODAL COMPARATIVA SIMPLE -->
+<div id="compModal" class="modal-overlay">
+    <div class="modal-content shadow-2xl">
+        <div class="flex justify-between items-center mb-6">
+            <div><h3 class="text-xl font-bold text-slate-800">Comparativa de Consumo</h3><p class="text-xs text-slate-400">Compara recibos de distintos usuarios</p></div>
+            <button onclick="cerrarComparativa()" class="text-slate-400 hover:text-slate-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg></button>
+        </div>
+        <div id="comp-input">
+            <div id="people-container" class="space-y-3 mb-6"></div>
+            <div class="flex gap-3">
+                <button onclick="agregarFila()" class="flex-1 py-3 border-2 border-dashed border-indigo-200 text-indigo-500 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-indigo-50 transition-all text-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
+                    Agregar Persona
+                </button>
+                <button onclick="procesarComparativa()" class="px-8 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all text-sm">Comparar</button>
+            </div>
+        </div>
+        <div id="comp-results" class="hidden">
+            <div class="grid grid-cols-2 gap-4 mb-5">
+                <div class="bg-red-50 p-4 rounded-2xl border border-red-100"><h4 class="text-red-900 font-bold text-[10px] uppercase mb-1">Mayor Consumo</h4><p id="comp-max-name" class="text-lg font-black text-red-700">-</p><p id="comp-max-kwh" class="text-sm font-bold text-red-400">0 kWh</p></div>
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100"><h4 class="text-slate-500 font-bold text-[10px] uppercase mb-1">Promedio Grupal</h4><p id="comp-avg" class="text-lg font-black text-slate-700">0 kWh</p><p class="text-[10px] text-slate-400 italic">Basado en datos ingresados</p></div>
+            </div>
+            <h4 class="font-bold text-slate-800 mb-1 text-sm">Comparativa de Gastos</h4>
+            <div class="chart-container"><canvas id="compChart"></canvas></div>
+            <button onclick="mostrarInputsComparativa()" class="mt-5 w-full py-3 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-all text-sm">Modificar datos</button>
+        </div>
+    </div>
+</div>
 
-        function resetUI() {
-            document.getElementById('input-step').classList.remove('hidden');
-            document.getElementById('result-step').classList.add('hidden');
-            document.getElementById('upload-placeholder').classList.remove('hidden');
-            document.getElementById('file-preview').classList.add('hidden');
-            document.getElementById('btn-process').classList.add('hidden');
-            fileInput.value = '';
-        }
 
-        window.onload = () => {
-            document.getElementById('uploadModal').style.display = 'none';
-        }
-    </script>
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- MODAL 2: LECTOR MÚLTIPLE                                       -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="multiModal" class="modal-overlay">
+    <div class="modal-content modal-wide">
+
+        <!-- Cabecera -->
+        <div class="flex justify-between items-center mb-5">
+            <div>
+                <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                    <span class="w-7 h-7 bg-emerald-500 rounded-xl flex items-center justify-center">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
+                        </svg>
+                    </span>
+                    Comparador Multiple de Recibos
+                </h3>
+                <p class="text-xs text-slate-400">Carga de 2 a 20 recibos CFE y compara su consumo, costo y clasificacion</p>
+            </div>
+            <button onclick="cerrarModalMultiple()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- ── PASO SUBIDA ── -->
+        <div id="mpaso-subida">
+            <!-- Drop zone verde -->
+            <div class="drop-zone drop-zone-green" id="multiZona"
+                 onclick="document.getElementById('multiInput').click()"
+                 ondragover="multiDragOver(event)" ondragleave="multiDragLeave(event)" ondrop="multiDrop(event)">
+                <input type="file" id="multiInput" accept=".pdf,.jpg,.jpeg,.png,.webp" multiple onchange="multiSeleccion(event)">
+                <div id="multiZonaVacia">
+                    <svg class="w-12 h-12 mx-auto text-emerald-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                    </svg>
+                    <p class="font-bold text-emerald-600">Arrastra todos tus recibos aqui</p>
+                    <p class="text-slate-400 text-xs mt-1">Minimo 2, maximo 20 · PDF · JPG · PNG · WebP</p>
+                </div>
+                <div id="multiZonaLlena" class="hidden">
+                    <p class="font-bold text-emerald-700 mb-1">
+                        <span id="multiContador" class="text-2xl font-black">0</span> recibos listos
+                    </p>
+                    <p class="text-slate-400 text-xs">Clic para agregar mas</p>
+                </div>
+            </div>
+
+            <div id="multiError" class="hidden mt-2 bg-red-50 border border-red-200 rounded-xl p-2 text-xs text-red-600 font-semibold"></div>
+
+            <!-- Cola de archivos -->
+            <div id="multiCola" class="mt-3 max-h-48 overflow-y-auto space-y-1 pr-1"></div>
+
+            <!-- Botones -->
+            <div class="flex gap-3 mt-4">
+                <button id="multiBtnProcesar" onclick="procesarMultiple()" disabled
+                    class="flex-1 py-3 bg-emerald-500 text-white rounded-2xl font-bold text-sm hover:bg-emerald-600 shadow-lg shadow-emerald-200 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    Analizar y Comparar
+                </button>
+                <button onclick="cargarDemoMultiple()" class="px-5 py-3 bg-slate-100 text-slate-500 rounded-2xl font-bold text-xs hover:bg-slate-200 transition-all">Demo (5 recibos)</button>
+            </div>
+            <p class="text-center text-[10px] text-slate-400 mt-2 font-semibold">Necesitas al menos 2 recibos para comparar</p>
+        </div>
+
+        <!-- ── PASO PROCESANDO ── -->
+        <div id="mpaso-procesando" class="hidden py-8 text-center">
+            <div class="spinner spinner-green mb-5"></div>
+            <p id="mMsgCarga" class="font-bold text-slate-700 text-sm mb-3">Analizando recibos...</p>
+            <div class="barra-fondo mx-auto max-w-xs">
+                <div class="barra-fill barra-fill-green" id="mBarraProgreso" style="width:0%"></div>
+            </div>
+            <p id="mTextoPct" class="text-slate-400 text-xs mt-2">0%</p>
+            <!-- Cola en vivo -->
+            <div id="multiColaLive" class="mt-5 max-h-40 overflow-y-auto space-y-1 text-left"></div>
+        </div>
+
+        <!-- ── PASO RESULTADO ── -->
+        <div id="mpaso-resultado" class="hidden">
+
+            <!-- Estadísticas globales -->
+            <div class="grid grid-cols-4 gap-3 mb-5">
+                <div class="stat-card">
+                    <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Recibos</p>
+                    <p id="mres-total-recibos" class="text-2xl font-black text-slate-700">-</p>
+                </div>
+                <div class="stat-card">
+                    <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Prom. Consumo</p>
+                    <p id="mres-prom-kwh" class="text-lg font-black text-indigo-600">-</p>
+                </div>
+                <div class="stat-card stat-card-green">
+                    <p class="text-[9px] font-black text-emerald-600 uppercase mb-1">Menor consumo</p>
+                    <p id="mres-min-nombre" class="text-xs font-black text-emerald-700 truncate">-</p>
+                    <p id="mres-min-kwh" class="text-base font-black text-emerald-600">-</p>
+                </div>
+                <div class="stat-card stat-card-red">
+                    <p class="text-[9px] font-black text-red-500 uppercase mb-1">Mayor consumo</p>
+                    <p id="mres-max-nombre" class="text-xs font-black text-red-700 truncate">-</p>
+                    <p id="mres-max-kwh" class="text-base font-black text-red-500">-</p>
+                </div>
+            </div>
+
+            <!-- Tabs gráficas -->
+            <div class="flex gap-2 mb-4">
+                <button class="mtab-btn active" onclick="cambiarTabMulti('kwh',this)">Consumo kWh</button>
+                <button class="mtab-btn" onclick="cambiarTabMulti('costo',this)">Costo $</button>
+                <button class="mtab-btn" onclick="cambiarTabMulti('radar',this)">Radar</button>
+                <button class="mtab-btn" onclick="cambiarTabMulti('tabla',this)">Tabla</button>
+            </div>
+
+            <!-- TAB kWh -->
+            <div id="mtab-kwh">
+                <div class="eng-card">
+                    <div class="chart-container"><canvas id="mGrafKwh"></canvas></div>
+                </div>
+            </div>
+
+            <!-- TAB Costo -->
+            <div id="mtab-costo" class="hidden">
+                <div class="eng-card">
+                    <div class="chart-container"><canvas id="mGrafCosto"></canvas></div>
+                </div>
+            </div>
+
+            <!-- TAB Radar -->
+            <div id="mtab-radar" class="hidden">
+                <div id="mRadarContainer" class="eng-card">
+                    <p class="text-[10px] text-slate-400 font-bold mb-2 text-center">Comparativa normalizada (0–100) por dimension</p>
+                    <div class="chart-container"><canvas id="mGrafRadar"></canvas></div>
+                </div>
+                <div id="mRadarAviso" class="hidden text-center py-6 text-slate-400 text-xs">El radar solo se muestra con 8 recibos o menos.</div>
+            </div>
+
+            <!-- TAB Tabla -->
+            <div id="mtab-tabla" class="hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left" style="border-collapse:collapse;">
+                        <thead>
+                            <tr class="border-b-2 border-slate-200">
+                                <th class="tabla-td text-[9px] font-black text-slate-400 uppercase">#</th>
+                                <th class="tabla-td text-[9px] font-black text-slate-400 uppercase">Titular</th>
+                                <th class="tabla-td text-[9px] font-black text-slate-400 uppercase text-center">kWh</th>
+                                <th class="tabla-td text-[9px] font-black text-slate-400 uppercase text-center">Total</th>
+                                <th class="tabla-td text-[9px] font-black text-slate-400 uppercase text-center">Media/dia</th>
+                                <th class="tabla-td text-[9px] font-black text-slate-400 uppercase text-center">Tarifa</th>
+                                <th class="tabla-td text-[9px] font-black text-slate-400 uppercase text-center">Periodo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mres-tabla"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="flex gap-3 mt-5">
+                <button onclick="reiniciarMultiple()" class="flex-1 py-3 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all text-sm">Nueva comparativa</button>
+                <button onclick="exportarCSV()"
+                    class="px-6 py-3 bg-emerald-500 text-white rounded-2xl font-bold hover:bg-emerald-600 shadow-lg shadow-emerald-200 transition-all text-sm flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                    </svg>
+                    Exportar CSV
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="js/lector.js"></script>
+<script src="js/lector_multiple.js"></script>
 </body>
-
 </html>
