@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Portafolio</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/stylesTareas.css">
+    
+    <link rel="icon" href="icon.png" type="image/png">
+    <link rel="shortcut icon" href="icon.png" type="image/png">
+</head>
+
+<body>
+
+    <!-- Sidebar derecho completo -->
+    <aside class="sidebar">
+
+        <!-- Logos arriba -->
+        <div class="sidebar-logos">
+            <img src="fie.png" alt="Logo FIE">
+            <img src="umich.png" alt="Logo UMSNH">
+        </div>
+
+        <!-- Navegación en medio -->
+        <nav class="menu">
+            <ul>
+                <li>
+                    <a href="/">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                        </svg>
+                        <span>Inicio</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="Tareas.html" class="active">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path
+                                d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                        </svg>
+                        <span>Tareas</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="Proyectos.html">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path
+                                d="M20 6h-2.18c.07-.44.18-.86.18-1 0-2.21-1.79-4-4-4s-4 1.79-4 4c0 .14.11.56.18 1H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-3c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm6 17H8V8h2v2h8V8h2v12z" />
+                        </svg>
+                        <span>Proyectos</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Perfil abajo -->
+       <a href="perfil.html" class="perfil">
+            <div class="img_user">
+                <img src="OIP.webp" alt="Imagen de Perfil">
+            </div>
+            <div class="nameUser">
+                <p>David Cortes</p>
+            </div>
+        </a>
+
+    </aside>
+
+    <!-- Contenido principal -->
+    <main>
+        <section>
+            <h1>
+                Tareas
+            </h1>
+            <div class="tareas-container">
+                <button class="tarea-btn" onclick="mostrarTarea(1)">Tarea 1</button>
+                <button class="tarea-btn" onclick="mostrarTarea(2)">Tarea 2</button>
+                <button class="tarea-btn" onclick="mostrarTarea(3)">Tarea 3</button>
+            </div>
+
+            <div class="tarea-contenido" id="tarea-1">
+                <h2>Tarea 1</h2>
+                <p>Descripción de la tarea 1...</p>
+            </div>
+
+            <div class="tarea-contenido" id="tarea-2">
+                <h2>Tarea 2</h2>
+                <p>Descripción de la tarea 2...</p>
+            </div>
+
+            <div class="tarea-contenido" id="tarea-3">
+                <h2>Tarea 3</h2>
+                <p>Descripción de la tarea 3...</p>
+            </div>
+        </section>
+    </main>
+
+    <div class="loader" id="loader">
+        <div class="loader-spinner"></div>
+        <p>Cargando...</p>
+    </div>
+
+    <script src="js/animacion.js"></script>
+    <script src="js/tareas.js"></script>
+</body>
+
+</html>
