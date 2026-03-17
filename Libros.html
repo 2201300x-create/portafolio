@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Libros — Mi Portafolio</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="icon" href="icon.png" type="image/png">
+    <link rel="shortcut icon" href="icon.png" type="image/png">
+    <style>
+        /* ================================
+           FILTROS
+        ================================ */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 20px;
+            margin-bottom: 4px;
+            max-width: 960px;
+        }
+
+        .filter-btn {
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1.5px solid var(--primary-color);
+            background: transparent;
+            color: var(--primary-color);
+            font-size: 0.82rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s, transform 0.15s;
+            font-family: Arial, sans-serif;
+        }
+
+        .filter-btn:hover {
+            background: rgba(76,175,80,0.12);
+            transform: translateY(-1px);
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .books-count {
+            font-size: 0.82rem;
+            color: #999;
+            margin: 10px 0 0;
+        }
+
+        /* ================================
+           GRID DE LIBROS
+        ================================ */
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 24px;
+            margin-top: 16px;
+            max-width: 960px;
+        }
+
+        .book-card {
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.10);
+            overflow: hidden;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: transform 0.22s ease, box-shadow 0.22s ease;
+            cursor: pointer;
+            border: 1.5px solid transparent;
+        }
+
+        .book-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 10px 32px rgba(76,175,80,0.18);
+            border-color: var(--primary-color);
+        }
+
+        /* Portada */
+        .book-cover {
+            width: 100%;
+            aspect-ratio: 3 / 4;
+            object-fit: cover;
+            display: block;
+            background: var(--secondary-color);
+        }
+
+        .book-cover-placeholder {
+            width: 100%;
+            aspect-ratio: 3 / 4;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .book-cover-placeholder svg {
+            width: 56px;
+            height: 56px;
+            fill: var(--primary-color);
+            opacity: 0.35;
+        }
+
+        /* Chip de categoría */
+        .book-category-chip {
+            display: inline-block;
+            font-size: 0.68rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            align-self: flex-start;
+        }
+
+        /* Info */
+        .book-info {
+            padding: 12px 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            flex: 1;
+        }
+
+        .book-title {
+            font-size: 0.92rem;
+            font-weight: bold;
+            color: var(--text-color);
+            line-height: 1.3;
+            margin: 0;
+        }
+
+        .book-author {
+            font-size: 0.78rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .book-desc {
+            font-size: 0.78rem;
+            color: #666;
+            line-height: 1.5;
+            margin: 4px 0 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Badge "Ver en Drive" */
+        .book-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+            font-size: 0.72rem;
+            font-weight: bold;
+            color: #fff;
+            background: var(--primary-color);
+            border-radius: 20px;
+            padding: 4px 11px;
+            align-self: flex-start;
+            transition: background 0.2s;
+        }
+
+        .book-card:hover .book-badge {
+            background: #388e3c;
+        }
+
+        .book-badge svg {
+            width: 12px;
+            height: 12px;
+            fill: #fff;
+        }
+
+        .books-empty-msg {
+            color: #aaa;
+            font-style: italic;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 16px;
+            }
+            .book-info {
+                padding: 10px 11px 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <button class="hamburger-btn" id="hamburgerBtn" aria-label="Abrir menú">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="sidebar-logos">
+            <img src="fie.png" alt="Logo FIE">
+            <img src="umich.png" alt="Logo UMSNH">
+        </div>
+
+        <nav class="menu">
+            <ul>
+                <li>
+                    <a href="index.html">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                        <span>Inicio</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="Tareas.html">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        <span>Tareas</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="NoteBook.html">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        <span>NoteBookLM</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="Libros.html" class="active">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
+                        <span>Libros</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="Proyectos.html">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 6h-2.18c.07-.44.18-.86.18-1 0-2.21-1.79-4-4-4s-4 1.79-4 4c0 .14.11.56.18 1H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-3c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm6 17H8V8h2v2h8V8h2v12z"/></svg>
+                        <span>Proyectos</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="ProyectosExternos.html">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 6h-2.18c.07-.44.18-.86.18-1 0-2.21-1.79-4-4-4s-4 1.79-4 4c0 .14.11.56.18 1H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-3c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm6 17H8V8h2v2h8V8h2v12z"/></svg>
+                        <span>Proyectos Externos</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <a href="perfil.html" class="perfil">
+            <div class="img_user">
+                <img src="OIP.webp" alt="Imagen de Perfil">
+            </div>
+            <div class="nameUser">
+                <p>David Cortes</p>
+            </div>
+        </a>
+
+    </aside>
+
+    <main>
+        <section>
+            <h1>Libros</h1>
+            <p>Colección personal de libros de referencia, estudio y lectura. Haz clic en cualquier libro para abrirlo en Google Drive.</p>
+
+            <div class="filters" id="filters">
+                <button class="filter-btn active" data-cat="todos">Todos</button>
+            </div>
+            <p class="books-count" id="booksCount"></p>
+
+            <div class="books-grid" id="booksGrid"></div>
+        </section>
+    </main>
+
+    <div class="loader" id="loader">
+        <div class="loader-spinner"></div>
+        <p>Cargando...</p>
+    </div>
+
+    <script src="js/animacion.js"></script>
+    <script src="js/sidebar.js"></script>
+
+    <script>
+    /*
+    ╔══════════════════════════════════════════════════════════════╗
+    ║  AGREGA TUS LIBROS AQUÍ — solo edita este array             ║
+    ║                                                              ║
+    ║  Campos:                                                     ║
+    ║    titulo  → nombre del libro                               ║
+    ║    autor   → autor(es)                                      ║
+    ║    desc    → reseña breve                                   ║
+    ║    portada → ruta local o URL de imagen ('' = placeholder)  ║
+    ║    drive   → link de Google Drive                           ║
+    ║    cat     → categoría — el filtro se crea automáticamente  ║
+    ║                                                              ║
+    ║  Categorías sugeridas (puedes inventar las tuyas):          ║
+    ║    "Probabilidad" | "Cálculo" | "Física" | "Programación"  ║
+    ║    "Literatura"   | "Externo" | "Álgebra" | "Redes"        ║
+    ╚══════════════════════════════════════════════════════════════╝
+    */
+    const BOOKS = [
+        {
+            titulo:  "Estadistica Matemática con Aplicacione - Sexta Edicion",
+            autor:   "John E. Freund, Irwin Millen, Marylees Miller",
+            desc:    "Un pilar de la estadística matemática que equilibra el rigor teórico con el cálculo, explorando a fondo los fundamentos de la probabilidad y la inferencia.",
+            portada: "Estadistica_Matemática_con_Aplicaciones.png",
+            drive:   "https://drive.google.com/file/d/1I25A74-0pHbO1cINb72nR1T0YJ2sgBu4/view?usp=sharing",
+            cat:     "Probabilidad y Estadistica"
+        },
+        {
+            titulo:  "Eloquent JavaScript",
+            autor:   "Marijn Haverbeke.",
+            desc:    "Este libro trata de JavaScript, programación y los maravillosos mundos digitales. ",
+            portada: "Eloquent_JavaScript.png",
+            drive:   "https://drive.google.com/file/d/1_qps84TW5l1Qt7s2NNXucm-5kZusGpoG/view?usp=sharing",
+            cat:     "Programación"
+        },
+        {
+            titulo:  "Cálculo",
+            autor:   "James Stewart",
+            desc:    "Referencia completa de cálculo diferencial e integral con aplicaciones a ciencias e ingeniería.",
+            portada: "portada_stewart.jpg",
+            drive:   "https://drive.google.com/tu-link-3",
+            cat:     "Cálculo"
+        },
+        {
+            titulo:  "El nombre del viento",
+            autor:   "Patrick Rothfuss",
+            desc:    "Primera entrega de la saga Crónica del asesino de reyes. Fantasía épica narrada en primera persona.",
+            portada: "portada_viento.jpg",
+            drive:   "https://drive.google.com/tu-link-4",
+            cat:     "Literatura"
+        },
+        {
+            titulo:  "Clean Code",
+            autor:   "Robert C. Martin",
+            desc:    "Guía práctica para escribir código limpio, mantenible y profesional en cualquier lenguaje.",
+            portada: "portada_cleancode.jpg",
+            drive:   "https://drive.google.com/tu-link-5",
+            cat:     "Programación"
+        },
+    ];
+
+    /* ── Colores por categoría — agrega los que necesites ── */
+    const CAT_COLORS = {
+        "Probabilidad y Estadistica":  { bg: "#e8f5e9", text: "#2e7d32" },
+        "Cálculo":       { bg: "#e3f2fd", text: "#1565c0" },
+        "Literatura":    { bg: "#fce4ec", text: "#880e4f" },
+        "Programación":  { bg: "#fff3e0", text: "#e65100" },
+        "Física":        { bg: "#f3e5f5", text: "#6a1b9a" },
+        "Álgebra":       { bg: "#e0f7fa", text: "#00695c" },
+        "Redes":         { bg: "#fbe9e7", text: "#bf360c" },
+        "Externo":       { bg: "#f1f8e9", text: "#558b2f" },
+    };
+    const DEFAULT_COLOR = { bg: "#f5f5f5", text: "#555" };
+
+    function getColor(cat) {
+        return CAT_COLORS[cat] || DEFAULT_COLOR;
+    }
+
+    /* ── Renderizar tarjetas ── */
+    function renderBooks(filter) {
+        const grid = document.getElementById("booksGrid");
+        const count = document.getElementById("booksCount");
+        grid.innerHTML = "";
+
+        const list = filter === "todos" ? BOOKS : BOOKS.filter(b => b.cat === filter);
+
+        if (list.length === 0) {
+            grid.innerHTML = `<p class="books-empty-msg">No hay libros en esta categoría aún.</p>`;
+            count.textContent = "";
+            return;
+        }
+
+        count.textContent = `${list.length} libro${list.length !== 1 ? "s" : ""}`;
+
+        list.forEach(book => {
+            const col = getColor(book.cat);
+            const card = document.createElement("a");
+            card.className = "book-card";
+            card.href = book.drive;
+            card.target = "_blank";
+            card.rel = "noopener";
+
+            card.innerHTML = `
+                <img class="book-cover" src="Books/${book.portada}" alt="${book.titulo}"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="book-cover-placeholder">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/>
+                    </svg>
+                </div>
+                <div class="book-info">
+                    <span class="book-category-chip"
+                          style="background:${col.bg};color:${col.text};">${book.cat}</span>
+                    <p class="book-title">${book.titulo}</p>
+                    <p class="book-author">${book.autor}</p>
+                    <p class="book-desc">${book.desc}</p>
+                    <span class="book-badge">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M19 19H5V5h7V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+                        </svg>
+                        Ver en Drive
+                    </span>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    /* ── Crear botones de filtro únicos desde el array ── */
+    function buildFilters() {
+        const cats = [...new Set(BOOKS.map(b => b.cat))];
+        const container = document.getElementById("filters");
+
+        cats.forEach(cat => {
+            const btn = document.createElement("button");
+            btn.className = "filter-btn";
+            btn.dataset.cat = cat;
+            btn.textContent = cat;
+            container.appendChild(btn);
+        });
+
+        container.addEventListener("click", e => {
+            const btn = e.target.closest(".filter-btn");
+            if (!btn) return;
+            container.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            renderBooks(btn.dataset.cat);
+        });
+    }
+
+    buildFilters();
+    renderBooks("todos");
+    </script>
+
+</body>
+</html>

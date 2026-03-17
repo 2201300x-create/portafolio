@@ -1,0 +1,484 @@
+/* ================================
+   VARIABLES ADICIONALES DE PERFIL
+   ================================ */
+:root {
+    --primary-light: #81C784;       /* Verde más claro para hovers */
+    --primary-dark: #388E3C;        /* Verde oscuro para acentos */
+    --card-bg: #f9f9f9;             /* Fondo de tarjetas */
+    --card-border: #e0e0e0;         /* Borde suave */
+    --card-shadow: rgba(76, 175, 80, 0.10); /* Sombra verde sutil */
+    --label-color: #888;            /* Color de etiquetas */
+    --tag-bg: #e8f5e9;              /* Fondo de tags */
+    --tag-color: var(--primary-dark);
+    --link-color: var(--primary-dark);
+}
+
+/* ================================
+   HERO DE PERFIL
+   ================================ */
+.perfil-page h1 {
+    font-size: 2rem;
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--primary-color);
+    padding-bottom: 8px;
+    margin-bottom: 24px;
+}
+
+.perfil-hero {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-left: 5px solid var(--primary-color);
+    border-radius: 12px;
+    padding: 1.8rem 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 16px var(--card-shadow);
+}
+
+.perfil-hero-avatar {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.perfil-hero-avatar img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary-color);
+    display: block;
+    position: relative;
+    z-index: 1;
+}
+
+.perfil-hero-avatar-ring {
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    width: 112px;
+    height: 112px;
+    border-radius: 50%;
+    border: 2px dashed var(--primary-light);
+    animation: spinRing 10s linear infinite;
+    z-index: 0;
+}
+
+@keyframes spinRing {
+    to { transform: rotate(360deg); }
+}
+
+.perfil-hero-info h2 {
+    font-size: 1.6rem;
+    color: var(--text-color);
+    margin: 0 0 0.4rem 0;
+}
+
+.perfil-hero-info p {
+    font-size: 0.88rem;
+    color: var(--label-color);
+    margin: 0.4rem 0 0 0;
+    line-height: 1.5;
+}
+
+.perfil-badge {
+    display: inline-block;
+    background: var(--primary-color);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 0.25rem 0.8rem;
+    border-radius: 999px;
+    letter-spacing: 0.03em;
+}
+
+/* ================================
+   GRID DE TARJETAS
+   ================================ */
+.perfil-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.4rem;
+}
+
+.perfil-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 1.4rem 1.6rem;
+    box-shadow: 0 2px 10px var(--card-shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.perfil-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px var(--card-shadow);
+}
+
+.perfil-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--card-border);
+    padding-bottom: 0.7rem;
+}
+
+.perfil-card-header svg {
+    width: 20px;
+    height: 20px;
+    fill: var(--primary-color);
+    flex-shrink: 0;
+}
+
+.perfil-card-header h3 {
+    font-size: 1rem;
+    color: var(--primary-dark);
+    margin: 0;
+}
+
+.perfil-card > p {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: #555;
+    margin: 0;
+}
+
+/* ================================
+   LISTA DE DATOS
+   ================================ */
+.perfil-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.perfil-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.88rem;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.perfil-list li:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.perfil-list-label {
+    color: var(--label-color);
+    font-size: 0.82rem;
+}
+
+.perfil-list-value {
+    font-weight: bold;
+    color: var(--text-color);
+    text-align: right;
+}
+
+.perfil-list-value a {
+    color: var(--link-color);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.perfil-list-value a:hover {
+    text-decoration: underline;
+}
+
+/* ================================
+   TAGS DE HERRAMIENTAS
+   ================================ */
+.perfil-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.perfil-tags span {
+    background: var(--tag-bg);
+    color: var(--tag-color);
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 0.3rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--primary-light);
+    transition: background 0.2s;
+}
+
+.perfil-tags span:hover {
+    background: var(--primary-color);
+    color: #fff;
+}
+
+/* ================================
+   RESPONSIVE
+   ================================ */
+@media (max-width: 768px) {
+    .perfil-hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.4rem;
+    }
+
+    .perfil-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .perfil-list li {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+    }
+
+    .perfil-list-value {
+        text-align: left;
+    }
+}
+
+/* ================================
+   TARJETA ANCHO COMPLETO
+   ================================ */
+.perfil-card-full {
+    grid-column: 1 / -1;
+}
+
+/* ================================
+   MATERIAS POR SEMESTRE
+   ================================ */
+.semestres-grid {
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 8px;
+
+    /* Scroll suave */
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Scrollbar personalizado */
+.semestres-grid::-webkit-scrollbar {
+    height: 5px;
+}
+.semestres-grid::-webkit-scrollbar-track {
+    background: var(--card-border);
+    border-radius: 999px;
+}
+.semestres-grid::-webkit-scrollbar-thumb {
+    background: var(--primary-light);
+    border-radius: 999px;
+}
+.semestres-grid::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+.semestre {
+    min-width: 220px;
+    flex-shrink: 0;
+    padding: 0 1.2rem;
+    border-right: 1px solid var(--card-border);
+}
+
+.semestre:first-child {
+    padding-left: 0;
+}
+
+.semestre:last-child {
+    border-right: none;
+}
+
+.semestre h4 {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0 0 0.7rem 0;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid var(--primary-light);
+    white-space: nowrap;
+}
+
+.materias-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.materias-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid var(--card-border);
+    font-size: 0.85rem;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+}
+
+.materias-list li:last-child {
+    border-bottom: none;
+}
+
+.materia-nombre {
+    color: var(--text-color);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.materia-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-shrink: 0;
+}
+
+.materia-creditos {
+    font-size: 0.75rem;
+    color: var(--label-color);
+    background: var(--secondary-color);
+    padding: 0.1rem 0.45rem;
+    border-radius: 6px;
+    white-space: nowrap;
+}
+
+.materia-estado {
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 0.15rem 0.55rem;
+    border-radius: 6px;
+    white-space: nowrap;
+}
+
+.materia-estado.cursada {
+    background: #e8f5e9;
+    color: #388E3C;
+    border: 1px solid #A5D6A7;
+}
+
+.materia-estado.reprobada {
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+}
+
+.materia-estado.cursando {
+    background: #fff8e1;
+    color: #f59e0b;
+    border: 1px solid #fcd34d;
+}
+
+/* Hover maestro */
+.materias-list li::after {
+    content: attr(data-maestro);
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-color);
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: bold;
+    border-radius: 6px;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+
+.materias-list li .materia-nombre,
+.materias-list li .materia-meta {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.materias-list li:hover .materia-nombre,
+.materias-list li:hover .materia-meta {
+    transform: translateY(-100%);
+    opacity: 0;
+}
+
+.materias-list li:hover::after {
+    transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .semestre {
+        min-width: 180px;
+        padding: 0 0.8rem;
+    }
+}
+
+/* ================================
+   HABILIDADES CON BARRAS
+   ================================ */
+.habilidades-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem 2.5rem;
+}
+
+.habilidad-grupo-titulo {
+    font-size: 0.82rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0 0 0.8rem 0;
+}
+
+.habilidad {
+    display: grid;
+    grid-template-columns: 110px 1fr 36px;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.65rem;
+    font-size: 0.85rem;
+    color: var(--text-color);
+}
+
+.barra-bg {
+    background: var(--card-border);
+    border-radius: 999px;
+    height: 8px;
+    overflow: hidden;
+}
+
+.barra-fill {
+    height: 100%;
+    width: 0%;                          /* Empieza en 0, JS lo anima */
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+    border-radius: 999px;
+    transition: width 0.8s ease;
+}
+
+.barra-pct {
+    font-size: 0.78rem;
+    font-weight: bold;
+    color: var(--primary-dark);
+    text-align: right;
+}
+
+/* Responsive habilidades */
+@media (max-width: 768px) {
+    .habilidades-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .habilidad {
+        grid-template-columns: 90px 1fr 32px;
+    }
+}

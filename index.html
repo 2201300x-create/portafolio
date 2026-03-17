@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Portafolio</title>
+    <link rel="stylesheet" href="styles/styles.css">
+
+    <link rel="icon" href="icon.png" type="image/png">
+    <link rel="shortcut icon" href="icon.png" type="image/png">
+</head>
+
+<body>
+
+    <!-- Botón hamburguesa (solo móvil) -->
+    <button class="hamburger-btn" id="hamburgerBtn" aria-label="Abrir menú">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Overlay oscuro (solo móvil) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar derecho completo -->
+    <aside class="sidebar" id="sidebar">
+
+        <!-- Logos arriba -->
+        <div class="sidebar-logos">
+            <img src="fie.png" alt="Logo FIE">
+            <img src="umich.png" alt="Logo UMSNH">
+        </div>
+
+        <!-- Navegación en medio -->
+        <nav class="menu">
+            <ul>
+                <li>
+                    <a href="index.html">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                        </svg>
+                        <span>Inicio</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="Tareas.html">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path
+                                d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                        </svg>
+                        <span>Tareas</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="NoteBook.html">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path
+                                d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                        </svg>
+                        <span>NoteBookLM</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="Libros.html">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path
+                                d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                        </svg>
+                        <span>Libros</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="Proyectos.html">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path
+                                d="M20 6h-2.18c.07-.44.18-.86.18-1 0-2.21-1.79-4-4-4s-4 1.79-4 4c0 .14.11.56.18 1H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-3c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm6 17H8V8h2v2h8V8h2v12z" />
+                        </svg>
+                        <span>Proyectos</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="ProyectosExternos.html">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path
+                                d="M20 6h-2.18c.07-.44.18-.86.18-1 0-2.21-1.79-4-4-4s-4 1.79-4 4c0 .14.11.56.18 1H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-3c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm6 17H8V8h2v2h8V8h2v12z" />
+                        </svg>
+                        <span>Proyectos Externos</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Perfil abajo -->
+        <a href="perfil.html" class="perfil">
+            <div class="img_user">
+                <img src="OIP.webp" alt="Imagen de Perfil">
+            </div>
+            <div class="nameUser">
+                <p>David Cortes</p>
+            </div>
+        </a>
+
+    </aside>
+
+    <!-- Contenido principal -->
+    <main>
+        <section>
+            <h1>Portafolio de Evidencias</h1>
+            <p>Bienvenido a mi portafolio académico de la materia de Probabilidad y Estadística, impartida en la
+                Facultad de Ingeniería Eléctrica de la Universidad Michoacana de San Nicolás de Hidalgo. Aquí
+                encontrarás las tareas y proyectos desarrollados a lo largo del curso como evidencia de mi aprendizaje y
+                progreso.</p>
+            <p>El desarrollo de las actividades se apoya en herramientas digitales como Google Colab para la ejecución
+                de código en Python, GitHub para el control de versiones y almacenamiento del código fuente, y Google
+                Drive para la organización y entrega de archivos y documentos. Estas plataformas permiten documentar de
+                forma ordenada cada uno de los trabajos realizados durante el semestre.</p>
+            <h2>Herramientas utilizadas</h2>
+
+            <div class="herramienta">
+                <img src="colab.webp" alt="Google Colab">
+                <div>
+                    <strong>Google Colab</strong>
+                    <p>Entorno de notebooks en la nube para escribir y ejecutar código Python...</p>
+                </div>
+            </div>
+
+            <div class="herramienta">
+                <img src="github.png" alt="GitHub">
+                <div>
+                    <strong>GitHub</strong>
+                    <p>Plataforma de control de versiones donde se almacena y organiza el código...</p>
+                </div>
+            </div>
+
+            <div class="herramienta">
+                <img src="drive.webp" alt="Google Drive">
+                <div>
+                    <strong>Google Drive</strong>
+                    <p>Espacio de almacenamiento en la nube para guardar y entregar documentos...</p>
+                </div>
+            </div>
+
+            <div class="herramienta">
+                <img src="notebooklm.png" alt="NotebookLM">
+                <div>
+                    <strong>NotebookLM</strong>
+                    <p>Herramienta de Google basada en inteligencia artificial para analizar y comprender documentos. Se
+                        utiliza para resumir apuntes, extraer ideas clave y profundizar en los temas del curso de forma
+                        interactiva.</p>
+                </div>
+            </div>
+
+            <div class="herramienta">
+                <img src="classroom.png" alt="Google Classroom">
+                <div>
+                    <strong>Google Classroom</strong>
+                    <p>Plataforma educativa de Google donde el profesor publica las tareas, proyectos y materiales del
+                        curso. Es el punto central para la entrega de actividades y comunicación con el docente.</p>
+                </div>
+            </div>
+
+            <h2>Objetivo del curso</h2>
+            <p>La materia de Probabilidad y Estadística tiene como objetivo desarrollar el pensamiento analítico
+                mediante el estudio de fenómenos aleatorios, distribuciones de probabilidad, estadística descriptiva e
+                inferencial, aplicados a problemas de ingeniería eléctrica.</p>
+        </section>
+    </main>
+
+    <div class="loader" id="loader">
+        <div class="loader-spinner"></div>
+        <p>Cargando...</p>
+    </div>
+
+    <script>
+      
+    </script>
+
+    <script src="js/animacion.js"></script>
+    <script src="js/sidebar.js"></script>
+</body>
+
+</html>

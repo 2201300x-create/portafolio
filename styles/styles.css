@@ -1,0 +1,465 @@
+/* Estilos globales */
+
+:root {
+    --primary-color: #4CAF50;
+    --secondary-color: #f0f0f0;
+    --text-color: #333;
+    --background-color: #fff;
+    --sidebar-width: 200px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    /* Deja espacio para el sidebar fijo a la derecha */
+    margin-right: var(--sidebar-width);
+    overflow: hidden;
+}
+
+body a {
+    text-decoration: none;
+}
+
+/* ================================
+   SIDEBAR DERECHO COMPLETO
+   ================================ */
+.sidebar {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    background-color: var(--secondary-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 10px;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+/* --- Logos arriba --- */
+.sidebar-logos {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.sidebar-logos img {
+    width: 70px;
+    height: auto;
+}
+
+/* --- Navegación en medio (ocupa el espacio sobrante) --- */
+.sidebar .menu {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar .menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.sidebar .menu li {
+    margin: 10px 0;
+    text-align: center;
+}
+.sidebar .menu li svg{
+    display: none;
+}
+
+.sidebar .menu a {
+    display: block;
+    padding: 10px 16px;
+    color: var(--text-color);
+    font-weight: bold;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.sidebar .menu a:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.sidebar .menu a.active span {
+    display: inline-block;
+    position: relative;
+    font-weight: bold;
+    color: #ffeedd;
+    animation: auraKitsune 2s ease-in-out infinite alternate;
+}
+
+@keyframes auraKitsune {
+    from {
+        text-shadow: 0 0 5px #ff9d00, 0 0 10px #ff9d00, 0 0 15px #ff4500;
+        transform: scale(1);
+    }
+    to {
+        text-shadow: 0 0 10px #ff9d00, 0 0 20px #ff9d00, 0 0 30px #ff4500, 0 0 40px #ff0000;
+        transform: scale(1.05);
+    }
+}
+
+/* --- Perfil abajo --- */
+.perfil {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+    cursor: pointer;
+}
+
+.img_user img {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary-color);
+}
+
+.nameUser p {
+    margin: 0;
+    font-weight: bold;
+    color: var(--text-color);
+    text-align: center;
+    font-size: 14px;
+}
+
+/* ================================
+   CONTENIDO PRINCIPAL
+   ================================ */
+main {
+    padding: 30px;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+main::-webkit-scrollbar {
+    width: 6px;
+    background: #fff;
+}
+
+main::--webkit-scrollbar-thumb {
+    width: 6px;
+    background: var(--text-color);
+    border-radius: 10px;
+}
+
+section h1 {
+    font-size: 2rem;
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--primary-color);
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+}
+
+section p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #555;
+    max-width: 750px;
+    margin-bottom: 16px;
+    min-height: 1em;
+}
+
+.herramienta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.herramienta img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.herramienta img.visible {
+    opacity: 1;
+}
+
+section h2 {
+    font-size: 1.3rem;
+    color: var(--primary-color);
+    margin-top: 30px;
+    margin-bottom: 8px;
+}
+
+/*
+================================
+   Carga Principal
+   ================================
+*/
+
+.loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: calc(100% - 200px);
+    height: 100vh;
+    background-color: #ffffff4d;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    gap: 16px;
+}
+
+.loader-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid var(--secondary-color);
+    border-top: 5px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.loader p {
+    color: var(--primary-color);
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+    .loader {
+        width: 100%;
+    }
+}
+
+/* ============================
+        Menu Responsive — Sidebar deslizable
+    =========================== */
+@media (max-width: 768px) {
+
+    body {
+        margin-right: 0;
+        margin-bottom: 0;
+    }
+
+    main {
+        height: 100vh;
+        padding-bottom: 20px;
+        padding-top: 70px;
+    }
+
+    /* Botón hamburguesa fijo arriba-izquierda */
+    .hamburger-btn {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        position: fixed;
+        top: 14px;
+        left: 16px;
+        z-index: 2000;
+        background: var(--secondary-color);
+        border: none;
+        border-radius: 8px;
+        width: 42px;
+        height: 42px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        transition: background 0.2s;
+    }
+
+    .hamburger-btn:hover {
+        background: #ddd;
+    }
+
+    .hamburger-btn span {
+        display: block;
+        width: 22px;
+        height: 2px;
+        background: var(--text-color);
+        border-radius: 2px;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        transform-origin: center;
+    }
+
+    /* Animación X al abrir */
+    .hamburger-btn.open span:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+    }
+    .hamburger-btn.open span:nth-child(2) {
+        opacity: 0;
+        transform: scaleX(0);
+    }
+    .hamburger-btn.open span:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+    }
+
+    /* Overlay oscuro detrás del sidebar */
+    .sidebar-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        z-index: 1500;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .sidebar-overlay.visible {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    /* Sidebar: se convierte en panel deslizable desde la izquierda */
+    .sidebar {
+        position: fixed;
+        left: 0;
+        right: auto;
+        top: 0;
+        width: 240px;
+        height: 100vh;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 28px 14px 24px;
+        box-shadow: 4px 0 16px rgba(0,0,0,0.2);
+        transform: translateX(-100%);
+        transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1600;
+        overflow-y: auto;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    /* Logos visibles en móvil */
+    .sidebar-logos {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 24px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+        width: 100%;
+    }
+
+    .sidebar-logos img {
+        width: 60px;
+        height: auto;
+    }
+
+    /* Menú con ícono + texto */
+    .sidebar .menu {
+        flex: 1;
+        width: 100%;
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .sidebar .menu ul {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        width: 100%;
+    }
+
+    .sidebar .menu li {
+        margin: 0;
+        text-align: left;
+    }
+
+    /* Mostrar SVG en móvil */
+    .sidebar .menu li svg {
+        display: block;
+        width: 20px;
+        height: 20px;
+        fill: var(--primary-color);
+        flex-shrink: 0;
+    }
+
+    .sidebar .menu a {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        font-size: 15px;
+        border-radius: 8px;
+        color: var(--text-color);
+        font-weight: bold;
+        transition: background-color 0.2s;
+    }
+
+    /* Mostrar texto (span) en móvil */
+    .sidebar .menu a span {
+        display: inline;
+    }
+
+    .sidebar .menu a:hover {
+        background-color: rgba(0,0,0,0.08);
+    }
+
+    /* Perfil abajo — visible y bien distribuido */
+    .perfil {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+        margin-top: auto;
+        padding-top: 18px;
+        border-top: 1px solid rgba(0,0,0,0.1);
+        width: 100%;
+        padding-left: 4px;
+    }
+
+    .img_user img {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--primary-color);
+        flex-shrink: 0;
+    }
+
+    .nameUser p {
+        display: block;
+        font-size: 14px;
+        font-weight: bold;
+        color: var(--text-color);
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+/* Ocultar elementos de móvil en escritorio */
+@media (min-width: 769px) {
+    .hamburger-btn,
+    .sidebar-overlay {
+        display: none;
+    }
+}
